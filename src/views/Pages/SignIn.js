@@ -43,7 +43,7 @@ function SignIn() {
           const { data, token } = response || {};
 
           loginUser(userDispatch, token, data);
-          history.push('/admin/statistics');
+          history.push('/admin/dashboard');
         },
       }
     );

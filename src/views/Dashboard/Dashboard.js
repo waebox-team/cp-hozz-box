@@ -90,7 +90,7 @@ export default function Dashboard() {
   return (
     <>
       <Flex flexDirection="column" pt={{ base: '120px', md: '75px' }}>
-        <SimpleGrid columns={{ sm: 1, md: 3, xl: 3 }} spacing="24px" mb="20px">
+        {/* <SimpleGrid columns={{ sm: 1, md: 3, xl: 3 }} spacing="24px" mb="20px">
           <Card minH="125px" bgColor="white">
             <Flex direction="column">
               <Flex flexDirection="row" align="center" justify="center" w="100%" mb="25px">
@@ -172,7 +172,7 @@ export default function Dashboard() {
               </Text>
             </Flex>
           </Card>
-        </SimpleGrid>
+        </SimpleGrid> */}
         {/* <Grid templateColumns={{ sm: '1fr' }} templateRows={{ lg: 'repeat(2, auto)' }} gap="20px">
           <Card p="0px" maxW={{ sm: '320px', md: '100%' }}>
             <DailyChart
