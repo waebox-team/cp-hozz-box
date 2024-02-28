@@ -187,7 +187,7 @@ function Sidebar(props) {
       {/* {logo} */}
       {/* <img src={logoImg} width={"200px"} /> */}
       <Flex alignItems="center" justifyContent="center" fontWeight="bold" textTransform="uppercase">
-        Advertiser Dashboard
+        Hozzbox Dashboard
       </Flex>
       <HSeparator my="26px" />
     </Box>
