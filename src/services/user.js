@@ -2,17 +2,17 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { ROOT_API } from 'constants/common';
 import { request } from 'utils/request';
 
-export const getProfile = () => request.get(ROOT_API + '/api/v1/publisher/profile');
+export const getProfile = () => request.get(ROOT_API + '/api/v1/user/profile');
 export const updateProfile = async (data) => {
-    return await request.post(ROOT_API + '/api/v1/publisher/change-information', data, {
+    return await request.post(ROOT_API + '/api/v1/user/change-information', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
   };
-export const register = data => request.post(ROOT_API + '/api/v1/publisher/register', data);
-export const changePassword = data => request.post(ROOT_API + '/api/v1/publisher/change-password', data);
-export const login = data => request.post(ROOT_API + '/api/v1/publisher/login', data);
+export const register = data => request.post(ROOT_API + '/api/v1/user/register', data);
+export const changePassword = data => request.post(ROOT_API + '/api/v1/user/change-password', data);
+export const login = data => request.post(ROOT_API + '/api/v1/user/login', data);
 
 // Mutation
 export const useRegisterMutation = () => useMutation({ mutationFn: register });
