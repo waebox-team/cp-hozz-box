@@ -1,6 +1,16 @@
 import React from 'react';
 import { Controller } from 'react-hook-form';
-import { Box, Flex, FormControl, FormErrorMessage, FormLabel, Input as InputComponent, Textarea } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input as InputComponent,
+  InputGroup,
+  InputRightElement,
+  Textarea,
+} from '@chakra-ui/react';
 
 const InputController = ({
   type = 'text',
@@ -18,6 +28,7 @@ const InputController = ({
   extendsComponent,
   onChange,
   requiredIndicator,
+  inputRightElement,
   ...props
 }) => (
   <Controller
@@ -46,18 +57,21 @@ const InputController = ({
                 }}
               />
             ) : (
-              <InputComponent
-                {...field}
-                {...props}
-                readOnly={readOnly}
-                hidden={hidden}
-                type={type}
-                disabled={disabled}
-                onChange={e => {
-                  onChange?.(e);
-                  field.onChange(e);
-                }}
-              />
+              <InputGroup>
+                <InputComponent
+                  {...field}
+                  {...props}
+                  readOnly={readOnly}
+                  hidden={hidden}
+                  type={type}
+                  disabled={disabled}
+                  onChange={e => {
+                    onChange?.(e);
+                    field.onChange(e);
+                  }}
+                />
+                {inputRightElement && <InputRightElement minW="4.5rem">{inputRightElement}</InputRightElement>}
+              </InputGroup>
             )}
             <FormErrorMessage>{error && error?.message}</FormErrorMessage>
           </Flex>
