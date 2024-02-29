@@ -6,6 +6,7 @@ import SignIn from 'views/Pages/SignIn';
 import Profile from 'views/Dashboard/Profile';
 import { Roles } from 'constants/common';
 import Size from 'views/Dashboard/Size';
+import Colors from 'views/Dashboard/Colors';
 
 var dashRoutes = [
   {
@@ -23,6 +24,15 @@ var dashRoutes = [
     redirect: true,
     layout: '/admin',
     component: Size,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: '/category/:id/colors',
+    name: 'Colors',
+    icon: <PersonIcon color="inherit" />,
+    redirect: true,
+    layout: '/admin',
+    component: Colors,
     role: [Roles.ADMIN],
   },
   {
