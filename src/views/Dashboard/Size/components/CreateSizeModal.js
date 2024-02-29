@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   Button,
   AlertDialog,
@@ -8,23 +8,22 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogCloseButton,
-  useToast,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import isEmpty from 'lodash/isEmpty';
 import { useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import InputController from 'components/Form/InputController';
 import { SizeFormValidate } from 'utils/validation';
 import { ModalType } from 'constants/common';
-import { useCreateSizeMutation } from 'services/size';
+import { useCreateSizeMutation, useUpdateSizeMutation } from 'services/size';
+import { toast } from 'components/Toast';
 
 const CreateSizeModal = ({ isOpen, sizeDetail, onClose, refetch }) => {
   const params = useParams();
   const { id: categoryId } = params || {};
   const cancelRef = React.useRef();
-  const toast = useToast();
   const createSizeMutation = useCreateSizeMutation();
+  const updateSizeMutation = useUpdateSizeMutation();
 
   const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(SizeFormValidate),
@@ -33,31 +32,30 @@ const CreateSizeModal = ({ isOpen, sizeDetail, onClose, refetch }) => {
     },
   });
 
-  //   useEffect(() => {
-  //     reset({ status: TicketStatusOption.find(item => item.value === ticketDetail.status) });
-  //   }, [ticketDetail]);
+  useEffect(() => {
+    if (sizeDetail) {
+      reset({ name: sizeDetail.name, id: sizeDetail?._id });
+    }
+  }, [sizeDetail]);
 
   const handleSuccess = () => {
-    toast({
-      title: 'Tạo kích thước thành công',
-      status: 'success',
-      duration: 9000,
-      isClosable: true,
-    });
+    toast.showMessageSuccess(`${sizeDetail ? 'Cập nhập' : 'Tạo'} kích thước thành công`);
     refetch?.();
     onClose(ModalType.Add);
   };
 
   const handleError = error => {
-    toast({
-      title: error?.response?.data?.errors?.[0]?.msg || error?.response?.data?.msg || 'Tạo kích thước thất bại',
-      status: 'error',
-      duration: 9000,
-      isClosable: true,
-    });
+    toast.showMessageError(
+      error?.response?.data?.errors?.[0]?.msg || error?.response?.data?.msg || `${sizeDetail ? 'Cập nhập' : 'Tạo'} kích thước thất bại`
+    );
   };
 
   const onSubmit = values => {
+    if (sizeDetail) {
+      updateSizeMutation.mutate({ ...values, categoryId }, { onSuccess: () => handleSuccess(), onError: error => handleError(error) });
+      return;
+    }
+
     createSizeMutation.mutate({ ...values, categoryId }, { onSuccess: () => handleSuccess(), onError: error => handleError(error) });
   };
 
@@ -75,7 +73,7 @@ const CreateSizeModal = ({ isOpen, sizeDetail, onClose, refetch }) => {
         <AlertDialogOverlay />
 
         <AlertDialogContent>
-          <AlertDialogHeader textTransform="uppercase">Thêm size</AlertDialogHeader>
+          <AlertDialogHeader textTransform="uppercase">{sizeDetail ? 'Cập nhập' : 'Tạo'} size</AlertDialogHeader>
           <AlertDialogCloseButton />
           <AlertDialogBody>
             <form>
@@ -91,8 +89,13 @@ const CreateSizeModal = ({ isOpen, sizeDetail, onClose, refetch }) => {
             >
               Hủy
             </Button>
-            <Button colorScheme="blue" ml={3} isLoading={false} onClick={handleSubmit(onSubmit)}>
-              Thêm
+            <Button
+              colorScheme="blue"
+              ml={3}
+              isLoading={createSizeMutation.isPending || updateSizeMutation.isPending}
+              onClick={handleSubmit(onSubmit)}
+            >
+              {sizeDetail ? 'Cập nhập' : 'Tạo'}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

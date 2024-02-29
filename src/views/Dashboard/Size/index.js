@@ -1,28 +1,21 @@
-import {
-  Button,
-  Flex,
-  FormControl,
-  FormLabel,
-  Stack,
-  Switch,
-  Table,
-  Tbody,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  useColorModeValue,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { useMemo, useState } from 'react';
+import { Button, Flex, Stack, Text, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import Card from 'components/Card/Card';
 import CardBody from 'components/Card/CardBody';
 import CardHeader from 'components/Card/CardHeader';
 import { ModalType } from 'constants/common';
 import CreateSizeModal from './components/CreateSizeModal';
-import { useMemo } from 'react';
+import SizeTable from './components/Table';
+import { useQueryGetSize } from 'services/size';
+import Pagination from 'components/Pagination/Pagination';
 
 export default function Size() {
   const textColor = useColorModeValue('gray.700', 'white');
+  const [sizeEditing, setSizeEditing] = useState(null);
+  const [filter, setFilter] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
   const { isOpen: isCreateModalOpen, onOpen: onOpenCreateModal, onClose: onCloseCreateModal } = useDisclosure();
   const { isOpen: isChangeStatusModalOpen, onOpen: onOpenChangeStatusModal, onClose: onCloseChangeStatusModal } = useDisclosure();
   const openModal = useMemo(
@@ -40,8 +33,16 @@ export default function Size() {
     [onCloseCreateModal, onCloseChangeStatusModal]
   );
 
+  const { data: sizesData, refetch } = useQueryGetSize({ ...filter });
+
+  const handleUpdateItem = (size, modalType) => {
+    openModal?.[modalType]?.();
+    setSizeEditing(size);
+  };
+
   const handelCloseModal = modalType => {
     closeModal?.[modalType]?.();
+    setSizeEditing(null);
   };
 
   return (
@@ -94,43 +95,14 @@ export default function Size() {
           </Flex>
         </CardHeader>
         <CardBody overflowX="auto">
-          {/* <Table variant="simple" color={textColor} overflowX="auto">
-            <Thead>
-              <Tr my=".8rem" pl="0px" color="gray.400">
-                <Th pl="0px" borderColor={borderColor} color="gray.400">
-                  Được tạo ra
-                </Th>
-                <Th borderColor={borderColor} color="gray.400">
-                  Đã cập nhật vào
-                </Th>
-                <Th borderColor={borderColor} color="gray.400">
-                  Trạng thái
-                </Th>
-                <Th borderColor={borderColor} color="gray.400">
-                  Chủ đề
-                </Th>
-                <Th borderColor={borderColor}></Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {data?.data?.map((row, index, arr) => {
-                return (
-                  <Row
-                    key={row._id}
-                    user={row}
-                    isLast={index === arr.length - 1 ? true : false}
-                    refetch={refetch}
-                    handelUpdateTicket={handelUpdateTicket}
-                  />
-                );
-              })}
-            </Tbody>
-          </Table> */}
-          {/* <Flex justifyContent={'flex-end'}>
+          <Stack overflow={'auto'}>
+            <SizeTable sizesData={sizesData?.data || []} handleUpdateSize={handleUpdateItem} refetch={refetch} />
+          </Stack>
+          <Flex justifyContent={'flex-end'}>
             <Pagination
-              page={data?.pagination?.page}
-              pageLength={data?.pagination?.pageSize}
-              totalRecords={data?.pagination?.count}
+              page={sizesData?.pagination?.page}
+              pageLength={sizesData?.pagination?.pageSize}
+              totalRecords={sizesData?.pagination?.count}
               onPageChange={(page, pageLength) => {
                 setFilter({
                   ...filter,
@@ -139,10 +111,12 @@ export default function Size() {
                 });
               }}
             />
-          </Flex> */}
+          </Flex>
         </CardBody>
       </Card>
-      {isCreateModalOpen && <CreateSizeModal sizeDetail={null} isOpen={isCreateModalOpen} onClose={handelCloseModal} />}
+      {isCreateModalOpen && (
+        <CreateSizeModal sizeDetail={sizeEditing} isOpen={isCreateModalOpen} onClose={handelCloseModal} refetch={refetch} />
+      )}
     </Flex>
   );
 }
