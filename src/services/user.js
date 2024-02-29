@@ -19,8 +19,6 @@ export const useRegisterMutation = () => useMutation({ mutationFn: register });
 export const useLoginMutation = () => useMutation({ mutationFn: login });
 export const useChangePasswordMutation = () => useMutation({ mutationFn: changePassword });
 export const useUpdateProfileMutation = () => useMutation({ mutationFn: updateProfile });
-export const useCreateCategoryMutation = () => useMutation({ mutationFn: createCategory });
-export const useUpdateCategoryMutation = () => useMutation({ mutationFn: updateCategory });
 
 
 // Query
