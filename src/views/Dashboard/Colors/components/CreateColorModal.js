@@ -15,15 +15,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import InputController from 'components/Form/InputController';
 import { SizeFormValidate } from 'utils/validation';
 import { ModalType } from 'constants/common';
-import { useCreateSizeMutation, useUpdateSizeMutation } from 'services/size';
 import { toast } from 'components/Toast';
+import { useCreateColorMutation, useUpdateColorMutation } from 'services/color';
 
-const CreateSizeModal = ({ isOpen, sizeDetail, onClose, refetch }) => {
+const CreateColorModal = ({ isOpen, colorDetail, onClose, refetch }) => {
   const params = useParams();
   const { id: categoryId } = params || {};
   const cancelRef = React.useRef();
-  const createSizeMutation = useCreateSizeMutation();
-  const updateSizeMutation = useUpdateSizeMutation();
+  const createColorMutation = useCreateColorMutation();
+  const updateColorMutation = useUpdateColorMutation();
 
   const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(SizeFormValidate),
@@ -33,30 +33,30 @@ const CreateSizeModal = ({ isOpen, sizeDetail, onClose, refetch }) => {
   });
 
   useEffect(() => {
-    if (sizeDetail) {
-      reset({ name: sizeDetail.name, id: sizeDetail?._id });
+    if (colorDetail) {
+      reset({ name: colorDetail.name, id: colorDetail?._id });
     }
-  }, [sizeDetail]);
+  }, [colorDetail]);
 
   const handleSuccess = () => {
-    toast.showMessageSuccess(`${sizeDetail ? 'Cập nhập' : 'Tạo'} kích thước thành công`);
+    toast.showMessageSuccess(`${colorDetail ? 'Cập nhập' : 'Tạo'} màu thành công`);
     refetch?.();
     onClose(ModalType.Add);
   };
 
   const handleError = error => {
     toast.showMessageError(
-      error?.response?.data?.errors?.[0]?.msg || error?.response?.data?.msg || `${sizeDetail ? 'Cập nhập' : 'Tạo'} kích thước thất bại`
+      error?.response?.data?.errors?.[0]?.msg || error?.response?.data?.msg || `${colorDetail ? 'Cập nhập' : 'Tạo'} màu thất bại`
     );
   };
 
   const onSubmit = values => {
-    if (sizeDetail) {
-      updateSizeMutation.mutate({ ...values, categoryId }, { onSuccess: () => handleSuccess(), onError: error => handleError(error) });
+    if (colorDetail) {
+      updateColorMutation.mutate({ ...values, categoryId }, { onSuccess: () => handleSuccess(), onError: error => handleError(error) });
       return;
     }
 
-    createSizeMutation.mutate({ ...values, categoryId }, { onSuccess: () => handleSuccess(), onError: error => handleError(error) });
+    createColorMutation.mutate({ ...values, categoryId }, { onSuccess: () => handleSuccess(), onError: error => handleError(error) });
   };
 
   return (
@@ -73,11 +73,11 @@ const CreateSizeModal = ({ isOpen, sizeDetail, onClose, refetch }) => {
         <AlertDialogOverlay />
 
         <AlertDialogContent>
-          <AlertDialogHeader textTransform="uppercase">{sizeDetail ? 'Cập nhập' : 'Tạo'} kích thước</AlertDialogHeader>
+          <AlertDialogHeader textTransform="uppercase">{colorDetail ? 'Cập nhập' : 'Tạo'} màu</AlertDialogHeader>
           <AlertDialogCloseButton />
           <AlertDialogBody>
             <form>
-              <InputController control={control} name="name" label="Tên kích thước" isRequired />
+              <InputController control={control} name="name" label="Tên màu" isRequired />
             </form>
           </AlertDialogBody>
           <AlertDialogFooter>
@@ -92,10 +92,10 @@ const CreateSizeModal = ({ isOpen, sizeDetail, onClose, refetch }) => {
             <Button
               colorScheme="blue"
               ml={3}
-              isLoading={createSizeMutation.isPending || updateSizeMutation.isPending}
+              isLoading={createColorMutation.isPending || updateColorMutation.isPending}
               onClick={handleSubmit(onSubmit)}
             >
-              {sizeDetail ? 'Cập nhập' : 'Tạo'}
+              {colorDetail ? 'Cập nhập' : 'Tạo'}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -104,4 +104,4 @@ const CreateSizeModal = ({ isOpen, sizeDetail, onClose, refetch }) => {
   );
 };
 
-export default CreateSizeModal;
+export default CreateColorModal;

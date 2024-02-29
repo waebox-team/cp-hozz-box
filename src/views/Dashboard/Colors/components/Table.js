@@ -5,34 +5,34 @@ import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import isEmpty from 'lodash/isEmpty';
 import { formatDate } from 'utils/helpers';
 import { ModalType } from 'constants/common';
-import { useDeleteSizeMutation } from 'services/size';
 import { toast } from 'components/Toast';
+import { useDeleteColorMutation } from 'services/color';
 
-const SizeTable = ({ sizesData, handleUpdateSize, refetch }) => {
+const ColorTable = ({ colorsData, handleUpdateColor, refetch }) => {
   const [sorting, setSorting] = useState([]);
   const columnHelper = createColumnHelper();
 
-  const deleteSizeMutation = useDeleteSizeMutation();
+  const deleteColorMutation = useDeleteColorMutation();
 
   const handleRowClick = (ticket, type) => {
-    handleUpdateSize(ticket, type);
+    handleUpdateColor(ticket, type);
   };
 
   const handleDeleteSize = async size => {
-    const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa kích thước này không?');
+    const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa màu này không?');
     if (!confirmDelete) {
       return;
     }
 
-    deleteSizeMutation.mutate(
+    deleteColorMutation.mutate(
       { id: size?._id },
       {
         onSuccess: () => {
-          toast.showMessageSuccess('Xóa kích thước thành công');
+          toast.showMessageSuccess('Xóa màu thành công');
           refetch?.();
         },
         onError: () => {
-          toast.showMessageError('Xóa kích thước thất bại');
+          toast.showMessageError('Xóa màu thất bại');
           refetch?.();
         },
       }
@@ -47,7 +47,7 @@ const SizeTable = ({ sizesData, handleUpdateSize, refetch }) => {
       //   }),
       columnHelper.accessor('name', {
         header: 'Tên',
-        cell: info => <Box textTransform="uppercase">{info.renderValue()}</Box>,
+        cell: info => <Box>{info.renderValue()}</Box>,
       }),
       columnHelper.accessor('createdAt', {
         header: 'Ngày tạo',
@@ -77,11 +77,11 @@ const SizeTable = ({ sizesData, handleUpdateSize, refetch }) => {
         ),
       }),
     ],
-    [sizesData]
+    [colorsData]
   );
 
   const table = useReactTable({
-    data: sizesData || [],
+    data: colorsData || [],
     columns,
     state: {
       sorting,
@@ -134,4 +134,4 @@ const SizeTable = ({ sizesData, handleUpdateSize, refetch }) => {
   );
 };
 
-export default SizeTable;
+export default ColorTable;
