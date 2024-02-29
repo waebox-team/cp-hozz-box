@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import {
   Button,
   Flex,
@@ -18,57 +17,31 @@ import {
 import Card from 'components/Card/Card';
 import CardBody from 'components/Card/CardBody';
 import CardHeader from 'components/Card/CardHeader';
-import Pagination from 'components/Pagination/Pagination';
-import Row from './components/Row';
-import { Select } from 'chakra-react-select';
-import { TYPE_ACTION, TypeTicket } from 'constants/common';
-import TicketForm from './components/TicketForm';
-import { useQueryGetTickets } from 'services/support';
+import { ModalType } from 'constants/common';
+import CreateSizeModal from './components/CreateSizeModal';
+import { useMemo } from 'react';
 
-export const initialFilter = {
-  pageSize: 10,
-  pageIndex: 0,
-};
-
-function Support() {
+export default function Size() {
   const textColor = useColorModeValue('gray.700', 'white');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
-  const [editTicket, seteditTicket] = useState(null);
-  const [filter, setFilter] = useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
-  const [ticketType, setTicketType] = useState(null);
-  const [switched, setSwitched] = useState(false);
+  const { isOpen: isCreateModalOpen, onOpen: onOpenCreateModal, onClose: onCloseCreateModal } = useDisclosure();
+  const { isOpen: isChangeStatusModalOpen, onOpen: onOpenChangeStatusModal, onClose: onCloseChangeStatusModal } = useDisclosure();
+  const openModal = useMemo(
+    () => ({
+      [ModalType.Add]: onOpenCreateModal,
+      [ModalType.ChangeStatus]: onOpenChangeStatusModal,
+    }),
+    [onOpenCreateModal, onOpenChangeStatusModal]
+  );
+  const closeModal = useMemo(
+    () => ({
+      [ModalType.Add]: onCloseCreateModal,
+      [ModalType.ChangeStatus]: onCloseChangeStatusModal,
+    }),
+    [onCloseCreateModal, onCloseChangeStatusModal]
+  );
 
-  const { isOpen: isRegisterOpen, onOpen: onRegisterOpen, onClose: onRegisterClose } = useDisclosure();
-
-  const {
-    data,
-    // isLoading: isLoadingComics,
-    refetch,
-  } = useQueryGetTickets({
-    ...filter,
-  });
-
-  const onFilter = () => {
-    setFilter({
-      ...filter,
-      type: ticketType?.value,
-      // status: switched
-    });
-  };
-
-  const handelUpdateTicket = (editTicket, type = TYPE_ACTION.UPDATE) => {
-    if (type === TYPE_ACTION.UPDATE) {
-      onRegisterOpen();
-      seteditTicket(editTicket);
-    }
-  };
-
-  const handelCloseModal = () => {
-    seteditTicket(null);
-    onRegisterClose();
+  const handelCloseModal = modalType => {
+    closeModal?.[modalType]?.();
   };
 
   return (
@@ -79,15 +52,10 @@ function Support() {
             <Flex direction={'column'}>
               <Flex direction="column" gap={'30px'}>
                 <Text fontSize="xl" color={textColor} fontWeight="bold">
-                  Support
-                </Text>
-                <Text fontWeight="normal">
-                  Any questions? You can get in touch via the live chat that big red button over there in the lower right corner.
-                  <br />
-                  However, if you need anything from your old tickets — they will still be here.
+                  Kích thước
                 </Text>
               </Flex>
-              <Flex justifyContent={'space-between'} alignItems={'end'} gap={'20px'} mt={'20px'}>
+              {/* <Flex justifyContent={'space-between'} alignItems={'end'} gap={'20px'} mt={'20px'}>
                 <Stack>
                   <Flex alignItems={'center'} gap={'20px'} flexWrap={{ base: 'wrap', md: 'nowrap' }}>
                     <FormControl minWidth={{ base: 'full', sm: '300px' }}>
@@ -116,9 +84,9 @@ function Support() {
                     </Button>
                   </Flex>
                 </Stack>
-              </Flex>
+              </Flex> */}
             </Flex>
-            <Button bg="#3182ce" color="#fff" _hover={{ bg: '#67a1d7' }} onClick={onRegisterOpen}>
+            <Button bg="#3182ce" color="#fff" _hover={{ bg: '#67a1d7' }} onClick={onOpenCreateModal}>
               <Text fontSize="md" fontWeight="bold" cursor="pointer">
                 Thêm
               </Text>
@@ -126,7 +94,7 @@ function Support() {
           </Flex>
         </CardHeader>
         <CardBody overflowX="auto">
-          <Table variant="simple" color={textColor} overflowX="auto">
+          {/* <Table variant="simple" color={textColor} overflowX="auto">
             <Thead>
               <Tr my=".8rem" pl="0px" color="gray.400">
                 <Th pl="0px" borderColor={borderColor} color="gray.400">
@@ -157,8 +125,8 @@ function Support() {
                 );
               })}
             </Tbody>
-          </Table>
-          <Flex justifyContent={'flex-end'}>
+          </Table> */}
+          {/* <Flex justifyContent={'flex-end'}>
             <Pagination
               page={data?.pagination?.page}
               pageLength={data?.pagination?.pageSize}
@@ -171,12 +139,10 @@ function Support() {
                 });
               }}
             />
-          </Flex>
+          </Flex> */}
         </CardBody>
       </Card>
-      {isRegisterOpen && <TicketForm editTicketDetail={editTicket} refetch={refetch} isOpen={isRegisterOpen} onClose={handelCloseModal} />}
+      {isCreateModalOpen && <CreateSizeModal sizeDetail={null} isOpen={isCreateModalOpen} onClose={handelCloseModal} />}
     </Flex>
   );
 }
-
-export default Support;

@@ -24,7 +24,7 @@ request.interceptors.request.use(
     const accessToken = CookieStorage.getAccessToken();
 
     if (accessToken) {
-      config.headers['pToken'] = accessToken;
+      config.headers['xToken'] = accessToken;
     }
 
     return config;

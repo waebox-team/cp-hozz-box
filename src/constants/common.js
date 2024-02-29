@@ -211,3 +211,16 @@ export const GroupByOptions = Object.keys(GROUP_BY_WEBSITE_ADS).map(key => ({
   label: key,
   value: GROUP_BY_WEBSITE_ADS[key],
 }));
+
+export const ModalType = {
+  Add: 'add',
+  Delete: 'delete',
+  ChangeStatus: 'changeStatus',
+  EmailBackup: 'emailBackup',
+  Import: 'import',
+  Preview: 'preview',
+  Detail: 'detail',
+  ResetPassword: 'resetPassword',
+  Assign: 'assign',
+  Block: 'block',
+};
