@@ -5,6 +5,7 @@ import SignUp from 'views/Pages/SignUp.js';
 import SignIn from 'views/Pages/SignIn';
 import Profile from 'views/Dashboard/Profile';
 import { Roles } from 'constants/common';
+import Size from 'views/Dashboard/Size';
 
 var dashRoutes = [
   {
@@ -13,6 +14,15 @@ var dashRoutes = [
     icon: <HomeIcon color="inherit" />,
     layout: '/admin',
     component: Dashboard,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: '/category/:id/size',
+    name: 'Size',
+    icon: <PersonIcon color="inherit" />,
+    redirect: true,
+    layout: '/admin',
+    component: Size,
     role: [Roles.ADMIN],
   },
   {

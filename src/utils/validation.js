@@ -35,8 +35,8 @@ export const schemaTest = {
     !value
       ? true
       : value?.match(
-        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/g
-      ),
+          /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/g
+        ),
   isValidGoogleMapUrl: value => (!value ? true : value?.match(/^(https:\/\/)(goo\.gl|google\.com)\/maps\/([^\s\\]+)$/g)),
   isValidAliasName: value => value.match(/^(?!-)([A-Za-z0-9-](?!.*--)){0,62}[A-Za-z0-9]$/g),
   isValidDomain: value => value.match(/^(((?!-)[A-Za-z0-9-]{0,62}[A-Za-z0-9])\.)+((?!-)[A-Za-z0-9-]{1,62}[A-Za-z0-9])(\.)?$/g),
@@ -125,26 +125,25 @@ export const ChangePasswordFormValidate = yup.object().shape({
     .required(ErrorForm.Required),
 });
 
-
 export const UpdateProfileFormValidate = yup.object().shape({
   fullname: yup
-      .string()
-      .min(5, ErrorForm.MaximumUsernameLength)
-      .max(30, ErrorForm.MaximumUsernameLength)
-      .nullable()
-      .required(ErrorForm.Required),
+    .string()
+    .min(5, ErrorForm.MaximumUsernameLength)
+    .max(30, ErrorForm.MaximumUsernameLength)
+    .nullable()
+    .required(ErrorForm.Required),
   codeNumber: yup
-      .string()
-      .min(9, ErrorForm.CodeNumberLength)
-      .max(12, ErrorForm.CodeNumberLength)
-      .matches(PASSWORD_REGEX, {
-          message: ErrorForm.PasswordInvalid,
-          excludeEmptyString: true,
-      })
-      .nullable()
-      .required(ErrorForm.Required),
+    .string()
+    .min(9, ErrorForm.CodeNumberLength)
+    .max(12, ErrorForm.CodeNumberLength)
+    .matches(PASSWORD_REGEX, {
+      message: ErrorForm.PasswordInvalid,
+      excludeEmptyString: true,
+    })
+    .nullable()
+    .required(ErrorForm.Required),
   frontSideFile: yup.mixed().required(ErrorForm.Required),
-  backSideFile: yup.mixed().required(ErrorForm.Required)
+  backSideFile: yup.mixed().required(ErrorForm.Required),
 });
 
 export const TicketFormValidate = yup.object().shape({
@@ -157,4 +156,8 @@ export const GetCodeNativeFormValidate = yup.object().shape({
   widget: yup.object(),
   fontSize: yup.object(),
   color: yup.string(),
+});
+
+export const SizeFormValidate = yup.object().shape({
+  name: yup.string().required(ErrorForm.Required),
 });
