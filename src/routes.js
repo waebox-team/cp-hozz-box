@@ -1,4 +1,5 @@
 import React from 'react';
+import { IoListCircleOutline } from 'react-icons/io5';
 import { HomeIcon, PersonIcon } from 'components/Icons/Icons';
 import Dashboard from 'views/Dashboard/Dashboard.js';
 import SignUp from 'views/Pages/SignUp.js';
@@ -7,6 +8,8 @@ import Profile from 'views/Dashboard/Profile';
 import { Roles } from 'constants/common';
 import Size from 'views/Dashboard/Size';
 import Colors from 'views/Dashboard/Colors';
+import Product from 'views/Dashboard/Product';
+import ProductForm from 'views/Dashboard/Product/components/ProductForm';
 
 var dashRoutes = [
   {
@@ -15,6 +18,23 @@ var dashRoutes = [
     icon: <HomeIcon color="inherit" />,
     layout: '/admin',
     component: Dashboard,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: '/product/create',
+    name: 'Tạo sản phẩm',
+    icon: <IoListCircleOutline size={20} />,
+    redirect: true,
+    layout: '/admin',
+    component: ProductForm,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: '/product',
+    name: 'Sản phẩm',
+    icon: <IoListCircleOutline size={20} />,
+    layout: '/admin',
+    component: Product,
     role: [Roles.ADMIN],
   },
   {

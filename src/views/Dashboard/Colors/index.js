@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Button, Flex, Stack, Text, useColorModeValue, useDisclosure } from '@chakra-ui/react';
+import { useParams } from 'react-router-dom';
 import Card from 'components/Card/Card';
 import CardBody from 'components/Card/CardBody';
 import CardHeader from 'components/Card/CardHeader';
@@ -10,11 +11,14 @@ import Pagination from 'components/Pagination/Pagination';
 import { useQueryGetColors } from 'services/color';
 
 export default function Colors() {
+  const params = useParams();
+  const { id: categoryId } = params || {};
   const textColor = useColorModeValue('gray.700', 'white');
   const [colorEditing, setColorEditing] = useState(null);
   const [filter, setFilter] = useState({
     pageIndex: 0,
     pageSize: 10,
+    categoryId,
   });
   const { isOpen: isCreateModalOpen, onOpen: onOpenCreateModal, onClose: onCloseCreateModal } = useDisclosure();
   const openModal = useMemo(

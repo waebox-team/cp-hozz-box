@@ -224,3 +224,5 @@ export const ModalType = {
   Assign: 'assign',
   Block: 'block',
 };
+
+export const FileImageValid = ['png', 'jpeg', 'jpg'];
