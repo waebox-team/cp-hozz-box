@@ -5,36 +5,32 @@ import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import isEmpty from 'lodash/isEmpty';
 import { useHistory } from 'react-router-dom';
 import { formatDate } from 'utils/helpers';
-import { ModalType, ROOT_API } from 'constants/common';
-import { useDeleteSizeMutation } from 'services/size';
+import { ROOT_API } from 'constants/common';
 import { toast } from 'components/Toast';
+import { useDeleteProductMutation } from 'services/product';
 
-const ProductTable = ({ productsData, handleUpdateSize, refetch }) => {
+const ProductTable = ({ productsData, refetch }) => {
   const history = useHistory();
   const [sorting, setSorting] = useState([]);
   const columnHelper = createColumnHelper();
 
-  const deleteSizeMutation = useDeleteSizeMutation();
-
-  const handleRowClick = (ticket, type) => {
-    handleUpdateSize(ticket, type);
-  };
+  const deleteProductMutation = useDeleteProductMutation();
 
   const handleDeleteSize = async size => {
-    const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa kích thước này không?');
+    const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?');
     if (!confirmDelete) {
       return;
     }
 
-    deleteSizeMutation.mutate(
+    deleteProductMutation.mutate(
       { id: size?._id },
       {
         onSuccess: () => {
-          toast.showMessageSuccess('Xóa kích thước thành công');
+          toast.showMessageSuccess('Xóa sản phẩm thành công');
           refetch?.();
         },
         onError: () => {
-          toast.showMessageError('Xóa kích thước thất bại');
+          toast.showMessageError('Xóa sản phẩm thất bại');
           refetch?.();
         },
       }
@@ -146,7 +142,7 @@ const ProductTable = ({ productsData, handleUpdateSize, refetch }) => {
       <Tbody>
         {isEmpty(table.getRowModel().rows) ? (
           <Tr>
-            <Td textAlign="center" colSpan={6}>
+            <Td textAlign="center" colSpan={10}>
               Không có dữ liệu
             </Td>
           </Tr>
