@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
-import { Button, Flex, Stack, Text, useColorModeValue, useDisclosure } from '@chakra-ui/react';
+import { useState } from 'react';
+import { Button, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 import Card from 'components/Card/Card';
 import CardBody from 'components/Card/CardBody';
 import CardHeader from 'components/Card/CardHeader';
@@ -17,7 +18,6 @@ export default function Product() {
   });
 
   const { data: productsData, refetch } = useQueryGetProducts(filter);
-  console.log('🚀 ~ Product ~ productsData:', productsData);
 
   return (
     <>
@@ -81,18 +81,20 @@ export default function Product() {
               <ProductTable productsData={productsData?.data || []} refetch={refetch} />
             </Stack>
             <Flex justifyContent={'flex-end'}>
-              <Pagination
-                page={productsData?.pagination?.page}
-                pageLength={productsData?.pagination?.pageSize}
-                totalRecords={productsData?.pagination?.count}
-                onPageChange={(page, pageLength) => {
-                  setFilter({
-                    ...filter,
-                    pageSize: pageLength,
-                    pageIndex: page - 1,
-                  });
-                }}
-              />
+              {!isEmpty(productsData?.data) && (
+                <Pagination
+                  page={productsData?.pagination?.page}
+                  pageLength={productsData?.pagination?.pageSize}
+                  totalRecords={productsData?.pagination?.count}
+                  onPageChange={(page, pageLength) => {
+                    setFilter({
+                      ...filter,
+                      pageSize: pageLength,
+                      pageIndex: page - 1,
+                    });
+                  }}
+                />
+              )}
             </Flex>
           </CardBody>
         </Card>

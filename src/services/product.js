@@ -7,6 +7,7 @@ export const getSizeForProduct = data => request.get(ROOT_API + '/api/v1/sizes',
 export const getColorForProduct = data => request.get(ROOT_API + '/api/v1/colors', { params: { categoryId: data.categoryId } });
 export const createProduct = data => request.post(ROOT_API + '/api/v1/products/create', data);
 export const updateProduct = data => request.post(ROOT_API + '/api/v1/products/update', data);
+export const deleteProduct = data => request.post(ROOT_API + '/api/v1/products/delete', data);
 export const uploadPhotoProduct = (data, config) =>
   request.post(ROOT_API + '/api/v1/products/upload-thumbnail', data, {
     headers: {
@@ -22,6 +23,7 @@ export const useGetSizeForProdMutation = () => useMutation({ mutationFn: getSize
 export const useGetColorForProdMutation = () => useMutation({ mutationFn: getColorForProduct });
 export const useCreateProductMutation = () => useMutation({ mutationFn: createProduct });
 export const useUpdateProductMutation = () => useMutation({ mutationFn: updateProduct });
+export const useDeleteProductMutation = () => useMutation({ mutationFn: deleteProduct });
 
 // Query
 export const useQueryGetCatForProduct = (params = {}, options = {}) =>

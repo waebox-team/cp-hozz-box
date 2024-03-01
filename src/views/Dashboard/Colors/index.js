@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Button, Flex, Stack, Text, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 import Card from 'components/Card/Card';
 import CardBody from 'components/Card/CardBody';
 import CardHeader from 'components/Card/CardHeader';
@@ -100,18 +101,20 @@ export default function Colors() {
             <SizeTable colorsData={colorsData?.data || []} handleUpdateColor={handleUpdateItem} refetch={refetch} />
           </Stack>
           <Flex justifyContent={'flex-end'}>
-            <Pagination
-              page={colorsData?.pagination?.page}
-              pageLength={colorsData?.pagination?.pageSize}
-              totalRecords={colorsData?.pagination?.count}
-              onPageChange={(page, pageLength) => {
-                setFilter({
-                  ...filter,
-                  pageSize: pageLength,
-                  pageIndex: page - 1,
-                });
-              }}
-            />
+            {!isEmpty(colorsData?.data) && (
+              <Pagination
+                page={colorsData?.pagination?.page}
+                pageLength={colorsData?.pagination?.pageSize}
+                totalRecords={colorsData?.pagination?.count}
+                onPageChange={(page, pageLength) => {
+                  setFilter({
+                    ...filter,
+                    pageSize: pageLength,
+                    pageIndex: page - 1,
+                  });
+                }}
+              />
+            )}
           </Flex>
         </CardBody>
       </Card>
