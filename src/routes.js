@@ -30,6 +30,15 @@ var dashRoutes = [
     role: [Roles.ADMIN],
   },
   {
+    path: '/product/:id',
+    name: 'Chi tiết sản phẩm',
+    icon: <IoListCircleOutline size={20} />,
+    redirect: true,
+    layout: '/admin',
+    component: ProductForm,
+    role: [Roles.ADMIN],
+  },
+  {
     path: '/product',
     name: 'Sản phẩm',
     icon: <IoListCircleOutline size={20} />,
