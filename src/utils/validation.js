@@ -2,6 +2,7 @@ import * as yup from 'yup';
 
 import { ErrorForm } from 'constants/error';
 import { EMAIL_REGEX, PASSWORD_REGEX } from 'constants/common';
+import { isEmpty } from 'lodash';
 
 export const schemaTest = {
   isIncludedLetter: value => value?.match(/[a-z]/g),
@@ -167,8 +168,13 @@ export const ProductFormValidate = yup.object().shape({
   price: yup.string().required(ErrorForm.Required),
   sale: yup.string().required(ErrorForm.Required),
   category: yup.object().required(ErrorForm.Required),
-  size: yup.object().required(ErrorForm.Required),
-  color: yup.array().required(ErrorForm.Required),
+  size: yup.object().when(['variants'], {
+    is: variants => {
+      return isEmpty(variants);
+    },
+    then: () => yup.object().required(ErrorForm.Required),
+  }),
+  colors: yup.array().required(ErrorForm.Required),
   variants: yup.array().of(
     yup.object().shape({
       price: yup.string().required(ErrorForm.Required),

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, FormLabel, FormControl, Flex, Text, Box, Grid, GridItem, IconButton } from '@chakra-ui/react';
+import { Button, FormLabel, FormControl, Flex, Text, Box, Grid, GridItem, IconButton, Image } from '@chakra-ui/react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import isEmpty from 'lodash/isEmpty';
+import omit from 'lodash/omit';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import { nanoid } from 'nanoid';
@@ -14,18 +15,19 @@ import Card from 'components/Card/Card';
 import CardBody from 'components/Card/CardBody';
 import CardHeader from 'components/Card/CardHeader';
 import {
-  createProduct,
   uploadPhotoProduct,
   useCreateProductMutation,
   useGetColorForProdMutation,
   useGetSizeForProdMutation,
   useQueryGetCatForProduct,
+  useQueryGetProductDetail,
+  useUpdateProductMutation,
 } from 'services/product';
 import { mappingOptionSelect } from 'utils/mapping';
 import { ProductFormValidate } from 'utils/validation';
 import NumericInputController from 'components/Form/NumericInputController';
-import { omit } from 'lodash';
 import { toast } from 'components/Toast';
+import { ROOT_API } from 'constants/common';
 
 export default function ProductForm() {
   const params = useParams();
@@ -54,20 +56,24 @@ export default function ProductForm() {
       setIsDragEnter(false);
       setError({ thumbnailFile: null });
       setFiles(prev => [
+        ...prev,
         ...acceptedFiles.map(file => ({
           id: nanoid(),
           preview: URL.createObjectURL(file),
           file,
         })),
-        ...prev,
       ]);
     },
   });
 
+  const { data: productDetailData, refetch } = useQueryGetProductDetail(id, {
+    enabled: !!id,
+  });
   const { data: categoriesData } = useQueryGetCatForProduct();
   const getSizeForProdMutation = useGetSizeForProdMutation();
   const getColorForProdMutation = useGetColorForProdMutation();
   const createProductMutation = useCreateProductMutation();
+  const updateProductMutation = useUpdateProductMutation();
 
   const { control, handleSubmit, reset, setValue } = useForm({
     resolver: yupResolver(ProductFormValidate),
@@ -79,7 +85,7 @@ export default function ProductForm() {
       tags: '',
       category: undefined,
       size: undefined,
-      color: undefined,
+      colors: undefined,
       variants: [],
     },
   });
@@ -94,6 +100,72 @@ export default function ProductForm() {
     }
   }, [categoriesData?.data]);
 
+  useEffect(() => {
+    const productDetail = productDetailData?.data;
+    const productVariants = productDetailData?.variants;
+    const productColors = productDetailData?.colors;
+
+    if (!isEmpty(productDetail)) {
+      reset({
+        name: productDetail.name,
+        price: productDetail.price,
+        sale: productDetail.sale,
+        tags: productDetail.tags,
+        description: productDetail.description,
+        category: categoryOption?.find(item => item.value === productDetail.categoryId._id),
+      });
+      setFiles(
+        productDetail.thumbnails.map(item => ({
+          id: nanoid(),
+          preview: ROOT_API + '/' + item,
+          path: item,
+        }))
+      );
+      handleSizeAndColorOption(productDetail.categoryId._id, productDetailData?.variants);
+    }
+
+    if (!isEmpty(productVariants)) {
+      productVariants.map(item =>
+        append({
+          name: item.sizeId.name,
+          sizeId: item.sizeId._id,
+          price: item.price,
+          count: item.count,
+        })
+      );
+    }
+
+    if (!isEmpty(productColors)) {
+      setValue(
+        'colors',
+        productColors?.map(item => ({ label: item.colorId.name, value: item.colorId._id }))
+      );
+    }
+  }, [productDetailData, categoryOption]);
+
+  const handleSizeAndColorOption = (categoryId, sizesExists = []) => {
+    getSizeForProdMutation.mutate(
+      { data: { categoryId: categoryId } },
+      {
+        onSuccess: res => {
+          const sizeAvailable = res?.data.filter(
+            sizeItem => !sizesExists.some(sizeItemExists => sizeItem._id === sizeItemExists.sizeId._id)
+          );
+
+          setSizeOption(mappingOptionSelect(sizeAvailable, 'name'));
+        },
+      }
+    );
+    getColorForProdMutation.mutate(
+      { data: { categoryId: categoryId } },
+      {
+        onSuccess: res => {
+          setColorOption(mappingOptionSelect(res?.data, 'name'));
+        },
+      }
+    );
+  };
+
   const handleCategorySelect = e => {
     if (!e) {
       setSizeOption([]);
@@ -103,22 +175,7 @@ export default function ProductForm() {
       return;
     }
 
-    getSizeForProdMutation.mutate(
-      { data: { categoryId: e.value } },
-      {
-        onSuccess: res => {
-          setSizeOption(mappingOptionSelect(res?.data, 'name'));
-        },
-      }
-    );
-    getColorForProdMutation.mutate(
-      { data: { categoryId: e.value } },
-      {
-        onSuccess: res => {
-          setColorOption(mappingOptionSelect(res?.data, 'name'));
-        },
-      }
-    );
+    handleSizeAndColorOption(e.value);
   };
 
   const handleSizeSelect = e => {
@@ -128,14 +185,21 @@ export default function ProductForm() {
 
   const onUploadPhoto = async () => {
     const formData = new FormData();
+    const filesUpload = files.filter(item => item.file);
+    const filesExist = files.filter(item => !item.file).map(item => item.path);
+    let pathFiles = [];
 
-    files.map(item => {
-      formData.append('thumbnailFiles', item.file);
-    });
+    if (!isEmpty(filesUpload)) {
+      filesUpload.map(item => {
+        formData.append('thumbnailFiles', item.file);
+      });
 
-    const response = await uploadPhotoProduct(formData);
+      const response = await uploadPhotoProduct(formData);
 
-    return response?.data;
+      pathFiles = response?.data;
+    }
+
+    return [...filesExist, ...pathFiles];
   };
 
   const onSubmit = async dataForm => {
@@ -146,25 +210,41 @@ export default function ProductForm() {
 
     const photosPath = await onUploadPhoto();
 
-    createProductMutation.mutate(
-      omit(
-        {
-          ...dataForm,
-          categoryId: dataForm.category?.value,
-          color: dataForm.color?.map(item => item.value),
-          thumbnails: photosPath,
-        },
-        ['category', 'size']
-      ),
+    const dataSubmit = omit(
       {
-        onSuccess: () => {
-          toast.showMessageSuccess('Tạo sản phẩm thành công');
-        },
-        onError: () => {
-          toast.showMessageError('Tạo sản phẩm thất bại');
-        },
-      }
+        ...dataForm,
+        categoryId: dataForm.category?.value,
+        colors: dataForm.colors?.map(item => item.value),
+        thumbnails: photosPath,
+      },
+      ['category', 'size']
     );
+
+    if (!!id) {
+      updateProductMutation.mutate(
+        { ...dataSubmit, id },
+        {
+          onSuccess: () => {
+            toast.showMessageSuccess('Cập nhập sản phẩm thành công');
+            refetch();
+          },
+          onError: () => {
+            toast.showMessageError('Cập nhập sản phẩm thất bại');
+          },
+        }
+      );
+
+      return;
+    }
+
+    createProductMutation.mutate(dataSubmit, {
+      onSuccess: () => {
+        toast.showMessageSuccess('Tạo sản phẩm thành công');
+      },
+      onError: () => {
+        toast.showMessageError('Tạo sản phẩm thất bại');
+      },
+    });
   };
 
   const onRemove = index => {
@@ -232,10 +312,9 @@ export default function ProductForm() {
             <SelectController
               styleContainer={{ pt: '4' }}
               isMulti
-              menuPlacement="top"
               control={control}
               isRequired
-              name="color"
+              name="colors"
               label="Màu"
               options={colorOption}
             />
@@ -272,7 +351,7 @@ export default function ProductForm() {
               <Grid templateColumns="repeat(5, 1fr)" gap={6} pt={5}>
                 {files?.map((file, index) => (
                   <GridItem w={'100%'} key={file.id} position="relative">
-                    <img src={file.preview} className="w-full h-full object-contain" />
+                    <Image src={file.preview} w="full" h="full" objectFit="contain" />
                     <IconButton bg="transparent" position="absolute" top="0" right="0" onClick={() => onRemove(index)}>
                       <BsXCircle size={16} color="red" />
                     </IconButton>
@@ -294,8 +373,13 @@ export default function ProductForm() {
             >
               Hủy
             </Button>
-            <Button colorScheme="blue" ml={3} isLoading={createProductMutation.isPending} onClick={handleSubmit(onSubmit)}>
-              Tạo
+            <Button
+              colorScheme="blue"
+              ml={3}
+              isLoading={createProductMutation.isPending || updateProductMutation.isPending}
+              onClick={handleSubmit(onSubmit)}
+            >
+              {!!id ? 'Cập nhập ' : 'Tạo'}
             </Button>
           </Flex>
         </CardBody>

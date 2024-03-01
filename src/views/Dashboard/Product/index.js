@@ -4,10 +4,20 @@ import { useHistory } from 'react-router-dom';
 import Card from 'components/Card/Card';
 import CardBody from 'components/Card/CardBody';
 import CardHeader from 'components/Card/CardHeader';
+import { useQueryGetProducts } from 'services/product';
+import Pagination from 'components/Pagination/Pagination';
+import ProductTable from './components/Table';
 
 export default function Product() {
   const history = useHistory();
   const textColor = useColorModeValue('gray.700', 'white');
+  const [filter, setFilter] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  const { data: productsData, refetch } = useQueryGetProducts(filter);
+  console.log('🚀 ~ Product ~ productsData:', productsData);
 
   return (
     <>
@@ -66,15 +76,15 @@ export default function Product() {
               </Button>
             </Flex>
           </CardHeader>
-          {/* <CardBody overflowX="auto">
+          <CardBody overflowX="auto">
             <Stack overflow={'auto'}>
-              <SizeTable sizesData={sizesData?.data || []} handleUpdateSize={handleUpdateItem} refetch={refetch} />
+              <ProductTable productsData={productsData?.data || []} refetch={refetch} />
             </Stack>
             <Flex justifyContent={'flex-end'}>
               <Pagination
-                page={sizesData?.pagination?.page}
-                pageLength={sizesData?.pagination?.pageSize}
-                totalRecords={sizesData?.pagination?.count}
+                page={productsData?.pagination?.page}
+                pageLength={productsData?.pagination?.pageSize}
+                totalRecords={productsData?.pagination?.count}
                 onPageChange={(page, pageLength) => {
                   setFilter({
                     ...filter,
@@ -84,7 +94,7 @@ export default function Product() {
                 }}
               />
             </Flex>
-          </CardBody> */}
+          </CardBody>
         </Card>
       </Flex>
       {/* {isCreateModalOpen && (
