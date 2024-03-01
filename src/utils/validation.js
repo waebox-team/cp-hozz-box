@@ -161,3 +161,18 @@ export const GetCodeNativeFormValidate = yup.object().shape({
 export const SizeFormValidate = yup.object().shape({
   name: yup.string().required(ErrorForm.Required),
 });
+
+export const ProductFormValidate = yup.object().shape({
+  name: yup.string().required(ErrorForm.Required),
+  price: yup.string().required(ErrorForm.Required),
+  sale: yup.string().required(ErrorForm.Required),
+  category: yup.object().required(ErrorForm.Required),
+  size: yup.object().required(ErrorForm.Required),
+  color: yup.array().required(ErrorForm.Required),
+  variants: yup.array().of(
+    yup.object().shape({
+      price: yup.string().required(ErrorForm.Required),
+      count: yup.string().required(ErrorForm.Required),
+    })
+  ),
+});
