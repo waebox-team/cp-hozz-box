@@ -7,7 +7,12 @@ import { useHistory } from 'react-router-dom';
 import { formatDate } from 'utils/helpers';
 import { ROOT_API } from 'constants/common';
 import { toast } from 'components/Toast';
-import { useDeleteProductMutation } from 'services/product';
+import {
+  useChangeStatusProductMutation,
+  useDeleteProductMutation,
+  useSetHotProductMutation,
+  useSetNewProductMutation,
+} from 'services/product';
 
 const ProductTable = ({ productsData, refetch }) => {
   const history = useHistory();
@@ -15,15 +20,18 @@ const ProductTable = ({ productsData, refetch }) => {
   const columnHelper = createColumnHelper();
 
   const deleteProductMutation = useDeleteProductMutation();
+  const changeStatusProductMutation = useChangeStatusProductMutation();
+  const setNewProductMutation = useSetNewProductMutation();
+  const setHotProductMutation = useSetHotProductMutation();
 
-  const handleDeleteSize = async size => {
+  const handleDeleteSize = product => {
     const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?');
     if (!confirmDelete) {
       return;
     }
 
     deleteProductMutation.mutate(
-      { id: size?._id },
+      { id: product?._id },
       {
         onSuccess: () => {
           toast.showMessageSuccess('Xóa sản phẩm thành công');
@@ -31,6 +39,22 @@ const ProductTable = ({ productsData, refetch }) => {
         },
         onError: () => {
           toast.showMessageError('Xóa sản phẩm thất bại');
+          refetch?.();
+        },
+      }
+    );
+  };
+
+  const onActionProduct = (productId, title, actionApi) => {
+    actionApi.mutate(
+      { id: productId },
+      {
+        onSuccess: () => {
+          toast.showMessageSuccess(`${title} thành công`);
+          refetch?.();
+        },
+        onError: () => {
+          toast.showMessageError(`${title} thất bại`);
           refetch?.();
         },
       }
@@ -65,15 +89,33 @@ const ProductTable = ({ productsData, refetch }) => {
       }),
       columnHelper.accessor('isPublished', {
         header: 'Phát hành',
-        cell: info => <Switch size="md" isChecked={info.getValue()} onChange={e => null} />,
+        cell: info => (
+          <Switch
+            size="md"
+            isChecked={info.getValue()}
+            onChange={e => onActionProduct(info?.row?.original?._id, 'Phát hành sản phẩm', changeStatusProductMutation)}
+          />
+        ),
       }),
       columnHelper.accessor('isNew', {
         header: 'Mới',
-        cell: info => <Switch size="md" isChecked={info.getValue()} onChange={e => null} />,
+        cell: info => (
+          <Switch
+            size="md"
+            isChecked={info.getValue()}
+            onChange={e => onActionProduct(info?.row?.original?._id, 'Thiết lập sản phẩm mới', setNewProductMutation)}
+          />
+        ),
       }),
       columnHelper.accessor('isBest', {
-        header: 'Best',
-        cell: info => <Switch size="md" isChecked={info.getValue()} onChange={e => null} />,
+        header: 'Nổi bật',
+        cell: info => (
+          <Switch
+            size="md"
+            isChecked={info.getValue()}
+            onChange={e => onActionProduct(info?.row?.original?._id, 'Thiết lập sản phẩm nổi bật', setHotProductMutation)}
+          />
+        ),
       }),
       columnHelper.accessor('createdAt', {
         header: 'Ngày tạo',

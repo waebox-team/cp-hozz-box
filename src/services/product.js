@@ -17,6 +17,9 @@ export const uploadPhotoProduct = (data, config) =>
   });
 export const getProducts = params => request.get(ROOT_API + '/api/v1/products', { params });
 export const getProductDetail = id => request.get(ROOT_API + `/api/v1/products/${id}`);
+export const changeStatusProduct = data => request.post(ROOT_API + '/api/v1/products/change-status', data);
+export const setNewProduct = data => request.post(ROOT_API + '/api/v1/products/set-is-new', data);
+export const setHotProduct = data => request.post(ROOT_API + '/api/v1/products/set-is-best', data);
 
 // Mutation
 export const useGetSizeForProdMutation = () => useMutation({ mutationFn: getSizeForProduct });
@@ -24,6 +27,9 @@ export const useGetColorForProdMutation = () => useMutation({ mutationFn: getCol
 export const useCreateProductMutation = () => useMutation({ mutationFn: createProduct });
 export const useUpdateProductMutation = () => useMutation({ mutationFn: updateProduct });
 export const useDeleteProductMutation = () => useMutation({ mutationFn: deleteProduct });
+export const useChangeStatusProductMutation = () => useMutation({ mutationFn: changeStatusProduct });
+export const useSetNewProductMutation = () => useMutation({ mutationFn: setNewProduct });
+export const useSetHotProductMutation = () => useMutation({ mutationFn: setHotProduct });
 
 // Query
 export const useQueryGetCatForProduct = (params = {}, options = {}) =>

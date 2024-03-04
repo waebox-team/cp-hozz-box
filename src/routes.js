@@ -1,5 +1,5 @@
 import React from 'react';
-import { IoListCircleOutline } from 'react-icons/io5';
+import { IoCar, IoListCircleOutline } from 'react-icons/io5';
 import { HomeIcon, PersonIcon } from 'components/Icons/Icons';
 import Dashboard from 'views/Dashboard/Dashboard.js';
 import SignUp from 'views/Pages/SignUp.js';
@@ -10,6 +10,7 @@ import Size from 'views/Dashboard/Size';
 import Colors from 'views/Dashboard/Colors';
 import Product from 'views/Dashboard/Product';
 import ProductForm from 'views/Dashboard/Product/components/ProductForm';
+import ShippingFee from 'views/Dashboard/ShippingFee/ShippingFee';
 
 var dashRoutes = [
   {
@@ -44,6 +45,14 @@ var dashRoutes = [
     icon: <IoListCircleOutline size={20} />,
     layout: '/admin',
     component: Product,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: '/shipping',
+    name: 'Phí Vận Chuyển',
+    icon: <IoCar  size={20} />,
+    layout: '/admin',
+    component: ShippingFee,
     role: [Roles.ADMIN],
   },
   {
