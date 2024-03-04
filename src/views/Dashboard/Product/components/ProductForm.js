@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, FormLabel, FormControl, Flex, Text, Box, Grid, GridItem, IconButton, Image } from '@chakra-ui/react';
+import { Button, FormLabel, FormControl, Flex, Text, Box, Grid, GridItem, IconButton, Image, Switch } from '@chakra-ui/react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import isEmpty from 'lodash/isEmpty';
@@ -16,6 +16,7 @@ import CardBody from 'components/Card/CardBody';
 import CardHeader from 'components/Card/CardHeader';
 import {
   uploadPhotoProduct,
+  useChangeStatusProductMutation,
   useCreateProductMutation,
   useGetColorForProdMutation,
   useGetSizeForProdMutation,
@@ -74,6 +75,7 @@ export default function ProductForm() {
   const getColorForProdMutation = useGetColorForProdMutation();
   const createProductMutation = useCreateProductMutation();
   const updateProductMutation = useUpdateProductMutation();
+  const changeStatusProductMutation = useChangeStatusProductMutation();
 
   const { control, handleSubmit, reset, setValue } = useForm({
     resolver: yupResolver(ProductFormValidate),
@@ -225,8 +227,8 @@ export default function ProductForm() {
         { ...dataSubmit, id },
         {
           onSuccess: () => {
-            toast.showMessageSuccess('Cập nhập sản phẩm thành công');
             refetch();
+            toast.showMessageSuccess('Cập nhập sản phẩm thành công');
           },
           onError: () => {
             toast.showMessageError('Cập nhập sản phẩm thất bại');
@@ -240,6 +242,7 @@ export default function ProductForm() {
     createProductMutation.mutate(dataSubmit, {
       onSuccess: () => {
         toast.showMessageSuccess('Tạo sản phẩm thành công');
+        history.push('/admin/product');
       },
       onError: () => {
         toast.showMessageError('Tạo sản phẩm thất bại');
@@ -251,17 +254,38 @@ export default function ProductForm() {
     setFiles(prev => prev.filter((i, idX) => idX !== index));
   };
 
+  const handlePublicProduct = () => {
+    changeStatusProductMutation.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          toast.showMessageSuccess(`Phát hành sản phẩm thành công`);
+          refetch?.();
+        },
+        onError: () => {
+          toast.showMessageError(`Phát hành sản phẩm thất bại`);
+          refetch?.();
+        },
+      }
+    );
+  };
+
   return (
     <Flex direction="column" pt={{ base: '120px', md: '75px' }}>
       <Card overflowX={{ sm: 'scroll', xl: 'hidden' }} pb="0px" bg="white">
-        {/* <CardHeader p="6px 0px 22px 0px">
-          <Flex justifyContent="space-between">
-            <Text fontSize="xl" color={textColor} fontWeight="bold">
-              {`${id ? 'Edit' : 'Create'} Post`}
+        <CardHeader p="6px 0px 22px 0px">
+          <Flex alignItems="center" justifyContent="space-between">
+            <Text fontSize="xl" fontWeight="bold">
+              {`${id ? 'Cập nhập' : 'Tạo'} sản phẩm`}
             </Text>
-            <Switch size="md" isChecked={isPublic} onChange={e => handlePublicPost(e.target.checked)} />
+            {!!id && (
+              <Flex flexDirection="column" alignItems="center" gap={1}>
+                <Text>Phát hành</Text>
+                <Switch size="md" isChecked={productDetailData?.data?.isPublished} onChange={handlePublicProduct} />
+              </Flex>
+            )}
           </Flex>
-        </CardHeader> */}
+        </CardHeader>
         <CardBody pb={4}>
           <form>
             <InputController control={control} name="name" label="Tên" isRequired styleContainer={{ pt: '4' }} />
