@@ -3,11 +3,15 @@ import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable, createCo
 import { useMemo, useState } from 'react';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import isEmpty from 'lodash/isEmpty';
+import { TbTextResize } from 'react-icons/tb';
+import { MdOutlineColorLens } from 'react-icons/md';
+import { useHistory } from 'react-router-dom';
 import { ModalType } from 'constants/common';
 import { toast } from 'components/Toast';
 import { useDeleteCategoryMutation, useSetBestCategoryMutation } from 'services/category';
 
 const SizeTable = ({ categorysData, handleUpdateCategory, refetch }) => {
+  const history = useHistory();
   const [sorting, setSorting] = useState([]);
   const columnHelper = createColumnHelper();
   const setBestCategoryMutation = useSetBestCategoryMutation();
@@ -100,6 +104,22 @@ const SizeTable = ({ categorysData, handleUpdateCategory, refetch }) => {
               }}
             >
               <EditIcon cursor="pointer" boxSize={4} />
+            </IconButton>
+            <IconButton
+              bg="transparent"
+              onClick={() => {
+                history.push(`/admin/category/${info?.row?.original?._id}/size`);
+              }}
+            >
+              <TbTextResize size={16} />
+            </IconButton>
+            <IconButton
+              bg="transparent"
+              onClick={() => {
+                history.push(`/admin/category/${info?.row?.original?._id}/colors`);
+              }}
+            >
+              <MdOutlineColorLens size={16} />
             </IconButton>
             <IconButton
               bg="transparent"

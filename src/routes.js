@@ -22,6 +22,31 @@ var dashRoutes = [
     role: [Roles.ADMIN],
   },
   {
+    path: '/category/:id/size',
+    name: 'Size',
+    icon: <PersonIcon color="inherit" />,
+    redirect: true,
+    layout: '/admin',
+    component: Size,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: '/category/:id/colors',
+    name: 'Colors',
+    icon: <PersonIcon color="inherit" />,
+    redirect: true,
+    layout: '/admin',
+    component: Colors,
+  },
+  {
+    path: '/category',
+    name: 'Thể loại',
+    icon: <IoBook color="inherit" />,
+    layout: '/admin',
+    component: Category,
+    role: [Roles.ADMIN],
+  },
+  {
     path: '/product/create',
     name: 'Tạo sản phẩm',
     icon: <IoListCircleOutline size={20} />,
@@ -45,32 +70,6 @@ var dashRoutes = [
     icon: <IoListCircleOutline size={20} />,
     layout: '/admin',
     component: Product,
-    role: [Roles.ADMIN],
-  },
-  {
-    path: '/category/:id/size',
-    name: 'Size',
-    icon: <PersonIcon color="inherit" />,
-    redirect: true,
-    layout: '/admin',
-    component: Size,
-    role: [Roles.ADMIN],
-  },
-  {
-    path: '/category/:id/colors',
-    name: 'Colors',
-    icon: <PersonIcon color="inherit" />,
-    redirect: true,
-    layout: '/admin',
-    component: Colors,
-  },
-  {
-    path: '/category',
-    name: 'Thể loại',
-    icon: <IoBook color="inherit" />,
-    secondaryNavbar: true,
-    layout: '/admin',
-    component: Category,
     role: [Roles.ADMIN],
   },
   {
@@ -102,7 +101,6 @@ var dashRoutes = [
       },
     ],
   },
-
 ];
 
 export default dashRoutes;

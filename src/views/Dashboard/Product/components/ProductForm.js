@@ -29,6 +29,7 @@ import { ProductFormValidate } from 'utils/validation';
 import NumericInputController from 'components/Form/NumericInputController';
 import { toast } from 'components/Toast';
 import { ROOT_API } from 'constants/common';
+import CheckboxController from 'components/Form/CheckboxController';
 
 export default function ProductForm() {
   const params = useParams();
@@ -89,6 +90,7 @@ export default function ProductForm() {
       size: undefined,
       colors: undefined,
       variants: [],
+      allowAddText: false,
     },
   });
   const { fields, append, remove } = useFieldArray({
@@ -111,10 +113,11 @@ export default function ProductForm() {
       reset({
         name: productDetail.name,
         price: productDetail.price,
-        sale: productDetail.sale,
-        tags: productDetail.tags,
-        description: productDetail.description,
+        sale: productDetail?.sale,
+        tags: productDetail?.tags,
+        description: productDetail?.description,
         category: categoryOption?.find(item => item.value === productDetail.categoryId._id),
+        allowAddText: productDetail?.allowAddText,
       });
       setFiles(
         productDetail.thumbnails.map(item => ({
@@ -298,7 +301,7 @@ export default function ProductForm() {
               control={control}
               isRequired
               name="category"
-              label="Loại"
+              label="Danh mục"
               isClearable
               options={categoryOption}
               onChange={handleCategorySelect}
@@ -341,6 +344,12 @@ export default function ProductForm() {
               name="colors"
               label="Màu"
               options={colorOption}
+            />
+            <CheckboxController
+              styleContainer={{ pt: '4', display: 'flex', alignItems: 'center' }}
+              control={control}
+              name="allowAddText"
+              label="Cho phép thêm chữ"
             />
             <FormControl pt={4}>
               <FormLabel minW="150px">Ảnh</FormLabel>
