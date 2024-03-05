@@ -182,3 +182,8 @@ export const ProductFormValidate = yup.object().shape({
     })
   ),
 });
+
+export const CategoryFormValidate = yup.object().shape({
+  title: yup.string().required(ErrorForm.Required),
+  description: yup.string().required(ErrorForm.Required),
+});

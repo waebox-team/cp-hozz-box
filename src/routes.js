@@ -1,5 +1,5 @@
 import React from 'react';
-import { IoListCircleOutline } from 'react-icons/io5';
+import { IoBook, IoListCircleOutline } from 'react-icons/io5';
 import { HomeIcon, PersonIcon } from 'components/Icons/Icons';
 import Dashboard from 'views/Dashboard/Dashboard.js';
 import SignUp from 'views/Pages/SignUp.js';
@@ -10,6 +10,7 @@ import Size from 'views/Dashboard/Size';
 import Colors from 'views/Dashboard/Colors';
 import Product from 'views/Dashboard/Product';
 import ProductForm from 'views/Dashboard/Product/components/ProductForm';
+import Category from 'views/Dashboard/Category/Category';
 
 var dashRoutes = [
   {
@@ -62,6 +63,14 @@ var dashRoutes = [
     redirect: true,
     layout: '/admin',
     component: Colors,
+  },
+  {
+    path: '/category',
+    name: 'Thể loại',
+    icon: <IoBook color="inherit" />,
+    secondaryNavbar: true,
+    layout: '/admin',
+    component: Category,
     role: [Roles.ADMIN],
   },
   {
@@ -93,6 +102,7 @@ var dashRoutes = [
       },
     ],
   },
+
 ];
 
 export default dashRoutes;
