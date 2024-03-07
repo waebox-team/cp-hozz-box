@@ -20,5 +20,6 @@ export const useLoginMutation = () => useMutation({ mutationFn: login });
 export const useChangePasswordMutation = () => useMutation({ mutationFn: changePassword });
 export const useUpdateProfileMutation = () => useMutation({ mutationFn: updateProfile });
 
+
 // Query
 export const useQueryUserProfile = (options = {}) => useQuery({ queryKey: ['getUserProfile'], queryFn: () => getProfile(), ...options });
