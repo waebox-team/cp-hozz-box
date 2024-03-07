@@ -1,5 +1,5 @@
 import React from 'react';
-import { IoBook, IoListCircleOutline } from 'react-icons/io5';
+import { IoCar, IoListCircleOutline } from 'react-icons/io5';
 import { HomeIcon, PersonIcon } from 'components/Icons/Icons';
 import Dashboard from 'views/Dashboard/Dashboard.js';
 import SignUp from 'views/Pages/SignUp.js';
@@ -10,6 +10,7 @@ import Size from 'views/Dashboard/Size';
 import Colors from 'views/Dashboard/Colors';
 import Product from 'views/Dashboard/Product';
 import ProductForm from 'views/Dashboard/Product/components/ProductForm';
+import ShippingFee from 'views/Dashboard/ShippingFee/ShippingFee';  
 import Category from 'views/Dashboard/Category/Category';
 
 var dashRoutes = [
@@ -70,6 +71,32 @@ var dashRoutes = [
     icon: <IoListCircleOutline size={20} />,
     layout: '/admin',
     component: Product,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: '/shipping',
+    name: 'Phí Vận Chuyển',
+    icon: <IoCar  size={20} />,
+    layout: '/admin',
+    component: ShippingFee,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: '/category/:id/size',
+    name: 'Size',
+    icon: <PersonIcon color="inherit" />,
+    redirect: true,
+    layout: '/admin',
+    component: Size,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: '/category/:id/colors',
+    name: 'Colors',
+    icon: <PersonIcon color="inherit" />,
+    redirect: true,
+    layout: '/admin',
+    component: Colors,
     role: [Roles.ADMIN],
   },
   {

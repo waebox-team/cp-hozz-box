@@ -162,6 +162,10 @@ export const GetCodeNativeFormValidate = yup.object().shape({
 export const SizeFormValidate = yup.object().shape({
   name: yup.string().required(ErrorForm.Required),
 });
+export const ShippingFeeFormValidate = yup.object().shape({
+  name: yup.object().required(ErrorForm.Required),
+  fee: yup.string().required(ErrorForm.Required),
+});
 
 export const ProductFormValidate = yup.object().shape({
   name: yup.string().required(ErrorForm.Required),
