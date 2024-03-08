@@ -1,5 +1,5 @@
 import React from 'react';
-import { IoCar, IoListCircleOutline } from 'react-icons/io5';
+import { IoBagCheckSharp, IoBook, IoCar, IoListCircleOutline } from 'react-icons/io5';
 import { HomeIcon, PersonIcon } from 'components/Icons/Icons';
 import Dashboard from 'views/Dashboard/Dashboard.js';
 import SignUp from 'views/Pages/SignUp.js';
@@ -12,6 +12,7 @@ import Product from 'views/Dashboard/Product';
 import ProductForm from 'views/Dashboard/Product/components/ProductForm';
 import ShippingFee from 'views/Dashboard/ShippingFee/ShippingFee';  
 import Category from 'views/Dashboard/Category/Category';
+import PurchaseHistory from 'views/Dashboard/PurchaseHistory/PurchaseHistory';
 
 var dashRoutes = [
   {
@@ -79,6 +80,14 @@ var dashRoutes = [
     icon: <IoCar  size={20} />,
     layout: '/admin',
     component: ShippingFee,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: '/purchase',
+    name: 'Lịch sử mua hàng',
+    icon: <IoBagCheckSharp color="inherit" />,
+    layout: '/admin',
+    component: PurchaseHistory,
     role: [Roles.ADMIN],
   },
   {
