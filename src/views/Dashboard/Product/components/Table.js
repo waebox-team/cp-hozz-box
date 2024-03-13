@@ -67,7 +67,7 @@ const ProductTable = ({ productsData, refetch }) => {
         header: 'Ảnh',
         cell: info => (
           <Box minW="100px" minH="100px">
-            <Image src={ROOT_API + '/' + info.getValue()[0]} boxSize="100px" />
+            <Image src={info.getValue()[0]?.includes('https') ? info.getValue()[0] : ROOT_API + '/' + info.getValue()[0]} boxSize="100px" />
           </Box>
         ),
       }),

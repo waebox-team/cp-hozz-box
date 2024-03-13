@@ -3,9 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { CookieStorage } from 'utils/cookie-storage';
 import { useHistory } from 'react-router-dom';
 import Pagination from 'components/Pagination/Pagination';
-import { useQueryGetListTransaction } from 'services/PurchaseHistory';
+import { useQueryGetListTransaction } from 'services/purchase-history';
 import PurchaseHistoryTable from './components/Table';
-const isLoggedIn = CookieStorage.isAuthenticated();
 
 function PurchaseHistory() {
   const history = useHistory();
@@ -13,20 +12,21 @@ function PurchaseHistory() {
     pageIndex: 0,
     pageSize: 10,
   });
+
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!CookieStorage.isAuthenticated()) {
       return history.push('/auth/sign-in');
     }
-  }, [isLoggedIn, history]);
+  }, []);
 
-  const { data: dataPurchase } = useQueryGetListTransaction({ ...filter }, { enabled: isLoggedIn });
+  const { data: dataPurchase } = useQueryGetListTransaction({ ...filter }, { enabled: CookieStorage.isAuthenticated() });
 
   return (
     <Flex direction="column" pt={{ base: '120px', md: '75px', lg: '100px' }}>
       <Card p="16px" mb="24px" bg="#fff">
         <CardBody overflowX="auto">
           <Stack overflow={'auto'}>
-            <PurchaseHistoryTable purchaseHistoryData={dataPurchase?.data || []}  />
+            <PurchaseHistoryTable purchaseHistoryData={dataPurchase?.data || []} />
           </Stack>
           <Flex justifyContent={'flex-end'}>
             <Pagination

@@ -14,7 +14,7 @@ import { useParams } from 'react-router-dom';
 import InputController from 'components/Form/InputController';
 import { ModalType } from 'constants/common';
 import { toast } from 'components/Toast';
-import { useUpdateCategoryMutation, useCreateCategoryMutation, useUpdateThumnailMutation } from 'services/category';
+import { useUpdateCategoryMutation, useCreateCategoryMutation, useUpdateThumbnailMutation } from 'services/category';
 import { CategoryFormValidate } from 'utils/validation';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -24,7 +24,7 @@ const CreateCategoryModal = ({ isOpen, categorysDetail, onClose, refetch }) => {
   const cancelRef = React.useRef();
   const createCategoryMutation = useCreateCategoryMutation();
   const updateCategoryMutation = useUpdateCategoryMutation();
-  const updateThumnailMutation = useUpdateThumnailMutation();
+  const updateThumnailMutation = useUpdateThumbnailMutation();
   const { control, handleSubmit, reset, setValue } = useForm({
     resolver: yupResolver(CategoryFormValidate),
     defaultValues: {

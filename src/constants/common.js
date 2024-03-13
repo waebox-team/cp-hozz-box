@@ -226,3 +226,5 @@ export const ModalType = {
 };
 
 export const FileImageValid = ['png', 'jpeg', 'jpg'];
+
+export const FileExcelValid = ['xls', 'xlsx'];

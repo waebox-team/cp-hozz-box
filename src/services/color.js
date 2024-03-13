@@ -2,10 +2,10 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { ROOT_API } from 'constants/common';
 import { request } from 'utils/request';
 
-export const getColorForCat = params => request.get(ROOT_API + '/api/v1/colors', { params });
-export const createColorForCat = data => request.post(ROOT_API + '/api/v1/colors/create', data);
-export const updateColorForCat = data => request.post(ROOT_API + '/api/v1/colors/update', data);
-export const deleteColorForCat = data => request.post(ROOT_API + '/api/v1/colors/delete', data);
+export const getColorForCat = params => request.get('/api/v1/colors', { params });
+export const createColorForCat = data => request.post('/api/v1/colors/create', data);
+export const updateColorForCat = data => request.post('/api/v1/colors/update', data);
+export const deleteColorForCat = data => request.post('/api/v1/colors/delete', data);
 
 // Mutation
 export const useCreateColorMutation = () => useMutation({ mutationFn: createColorForCat });
