@@ -21,7 +21,6 @@ import { ModalType } from 'constants/common';
 import SizeTable from './components/Table';
 import CreateCategoryModal from './components/CreateCategoryModal';
 import Pagination from 'components/Pagination/Pagination';
-const isLoggedIn = CookieStorage.isAuthenticated();
 
 function Category() {
   const textColor = useColorModeValue('gray.700', 'white');
@@ -32,11 +31,12 @@ function Category() {
     pageIndex: 0,
     pageSize: 10,
   });
+
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!CookieStorage.isAuthenticated()) {
       return history.push('/auth/sign-in');
     }
-  }, [isLoggedIn, history]);
+  }, []);
 
   const { isOpen: isCreateModalOpen, onOpen: onOpenCreateModal, onClose: onCloseCreateModal } = useDisclosure();
   const { isOpen: isChangeStatusModalOpen, onOpen: onOpenChangeStatusModal, onClose: onCloseChangeStatusModal } = useDisclosure();
@@ -55,7 +55,10 @@ function Category() {
     [onCloseCreateModal, onCloseChangeStatusModal]
   );
 
-  const { data: categorysData, refetch } = useQueryGetListCategory({ ...filter, searchKeyword: filter.searchTitle }, { enabled: isLoggedIn });
+  const { data: categoryData, refetch } = useQueryGetListCategory(
+    { ...filter, searchKeyword: filter.searchTitle },
+    { enabled: CookieStorage.isAuthenticated() }
+  );
 
   const handleUpdateItem = (size, modalType) => {
     openModal?.[modalType]?.();
@@ -110,13 +113,13 @@ function Category() {
         </CardHeader>
         <CardBody overflowX="auto">
           <Stack overflow={'auto'}>
-            <SizeTable categorysData={categorysData?.data || []} handleUpdateCategory={handleUpdateItem} refetch={refetch} />
+            <SizeTable categoryData={categoryData?.data || []} handleUpdateCategory={handleUpdateItem} refetch={refetch} />
           </Stack>
           <Flex justifyContent={'flex-end'}>
             <Pagination
-              page={categorysData?.pagination?.page}
-              pageLength={categorysData?.pagination?.pageSize}
-              totalRecords={categorysData?.pagination?.count}
+              page={categoryData?.pagination?.page}
+              pageLength={categoryData?.pagination?.pageSize}
+              totalRecords={categoryData?.pagination?.count}
               onPageChange={(page, pageLength) => {
                 setFilter({
                   ...filter,

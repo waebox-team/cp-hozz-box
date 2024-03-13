@@ -1,16 +1,20 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import Card from 'components/Card/Card';
 import CardBody from 'components/Card/CardBody';
 import CardHeader from 'components/Card/CardHeader';
-import { useQueryGetProducts } from 'services/product';
+import { importProduct, useExportTemplateProductMutation, useQueryGetProducts } from 'services/product';
 import Pagination from 'components/Pagination/Pagination';
 import ProductTable from './components/Table';
+import { downloadFile } from 'utils/helpers';
+import { toast } from 'components/Toast';
+import { FileExcelValid } from 'constants/common';
 
 export default function Product() {
   const history = useHistory();
+  const inputImportRef = useRef();
   const textColor = useColorModeValue('gray.700', 'white');
   const [filter, setFilter] = useState({
     pageIndex: 0,
@@ -18,6 +22,45 @@ export default function Product() {
   });
 
   const { data: productsData, refetch } = useQueryGetProducts(filter);
+  const exportTemplateProductMutation = useExportTemplateProductMutation();
+
+  const onDownloadTemplate = () => {
+    exportTemplateProductMutation.mutate(undefined, {
+      onSuccess: response => {
+        downloadFile(response, 'product-template');
+        toast.showMessageSuccess('Tải mẫu sản phẩm thành công');
+      },
+      onError: () => {
+        toast.showMessageError('Tải mẫu sản phẩm thất bại');
+      },
+    });
+  };
+
+  const handleImportProduct = async e => {
+    if (e?.target?.files?.[0]) {
+      const productFile = e.target.files[0];
+      const extensionFile = productFile?.name?.split('.')?.pop();
+
+      if (FileExcelValid.includes(extensionFile)) {
+        const formData = new FormData();
+
+        formData.append('productFile', productFile);
+
+        await importProduct(formData)
+          .then(() => {
+            toast.showMessageSuccess('Tải lên sản phẩm thành công');
+            refetch();
+          })
+          .catch(() => {
+            toast.showMessageError('Tải lên sản phẩm thất bại');
+          });
+
+        return;
+      }
+
+      setError('Chỉ hỗ trợ tải lại file định dạng .xlsx, xls');
+    }
+  };
 
   return (
     <>
@@ -62,18 +105,36 @@ export default function Product() {
                 </Stack>
               </Flex> */}
               </Flex>
-              <Button
-                bg="#3182ce"
-                color="#fff"
-                _hover={{ bg: '#67a1d7' }}
-                onClick={() => {
-                  history.push('/admin/product/create');
-                }}
-              >
-                <Text fontSize="md" fontWeight="bold" cursor="pointer">
-                  Thêm
-                </Text>
-              </Button>
+              <Flex gap={2}>
+                <Button bg="#3182ce" color="#fff" _hover={{ bg: '#67a1d7' }} isLoading={false} onClick={onDownloadTemplate}>
+                  Tải template
+                </Button>
+                <Flex alignItems="center">
+                  <input type="file" hidden ref={inputImportRef} onChange={handleImportProduct} />
+                  <Button
+                    bg="#3182ce"
+                    color="#fff"
+                    _hover={{ bg: '#67a1d7' }}
+                    onClick={() => {
+                      inputImportRef?.current?.click();
+                    }}
+                  >
+                    Import sản phẩm
+                  </Button>
+                </Flex>
+                <Button
+                  bg="#3182ce"
+                  color="#fff"
+                  _hover={{ bg: '#67a1d7' }}
+                  onClick={() => {
+                    history.push('/admin/product/create');
+                  }}
+                >
+                  <Text fontSize="md" fontWeight="bold" cursor="pointer">
+                    Thêm
+                  </Text>
+                </Button>
+              </Flex>
             </Flex>
           </CardHeader>
           <CardBody overflowX="auto">

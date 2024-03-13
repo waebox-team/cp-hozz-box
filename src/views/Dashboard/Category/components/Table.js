@@ -10,7 +10,7 @@ import { ModalType } from 'constants/common';
 import { toast } from 'components/Toast';
 import { useDeleteCategoryMutation, useSetBestCategoryMutation } from 'services/category';
 
-const SizeTable = ({ categorysData, handleUpdateCategory, refetch }) => {
+const SizeTable = ({ categoryData, handleUpdateCategory, refetch }) => {
   const history = useHistory();
   const [sorting, setSorting] = useState([]);
   const columnHelper = createColumnHelper();
@@ -133,11 +133,11 @@ const SizeTable = ({ categorysData, handleUpdateCategory, refetch }) => {
         ),
       }),
     ],
-    [categorysData]
+    [categoryData]
   );
 
   const table = useReactTable({
-    data: categorysData || [],
+    data: categoryData || [],
     columns,
     state: {
       sorting,
@@ -172,7 +172,7 @@ const SizeTable = ({ categorysData, handleUpdateCategory, refetch }) => {
       <Tbody>
         {isEmpty(table.getRowModel().rows) ? (
           <Tr>
-            <Td textAlign="center" colSpan={6}>
+            <Td textAlign="center" colSpan={4}>
               Không có dữ liệu
             </Td>
           </Tr>

@@ -20,7 +20,7 @@ const PurchaseHistoryTable = ({ purchaseHistoryData }) => {
       }),
       columnHelper.accessor('amount_total', {
         header: 'Giá',
-        cell: info => info.getValue().toLocaleString('vi', {style : 'currency', currency : 'VND'}),
+        cell: info => info.getValue().toLocaleString('vi', { style: 'currency', currency: 'VND' }),
       }),
       columnHelper.accessor('mode', {
         header: 'Phương thức thanh toán',
@@ -78,7 +78,7 @@ const PurchaseHistoryTable = ({ purchaseHistoryData }) => {
       <Tbody>
         {isEmpty(table.getRowModel().rows) ? (
           <Tr>
-            <Td textAlign="center" colSpan={6}>
+            <Td textAlign="center" colSpan={7}>
               Không có dữ liệu
             </Td>
           </Tr>

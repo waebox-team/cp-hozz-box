@@ -14,7 +14,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import BoxState from './components/BoxState';
 import { ShippingFeeFormValidate } from 'utils/validation';
 import ShippingForm from './components/ShippingForm';
-const isLoggedIn = CookieStorage.isAuthenticated();
 
 function ShippingFee() {
   const textColor = useColorModeValue('gray.700', 'white');
@@ -24,17 +23,18 @@ function ShippingFee() {
   const setShippingFeeMutation = useCreateShippingFeeMutation();
   const getState = useGetStateByCountryMutation();
   const [dataState, setDataState] = useState(null);
+
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!CookieStorage.isAuthenticated()) {
       return history.push('/auth/sign-in');
     }
-  }, [isLoggedIn, history]);
+  }, []);
 
-  const { control, handleSubmit ,setValue } = useForm({
+  const { control, handleSubmit, setValue } = useForm({
     resolver: yupResolver(ShippingFeeFormValidate),
     defaultValues: {
       name: '',
-      fee:'',
+      fee: '',
     },
   });
 
@@ -47,7 +47,7 @@ function ShippingFee() {
         },
         onError: () => {
           toast.showMessageSuccess(`Tạo phí thất bại`);
-        }
+        },
       }
     );
   };
@@ -74,7 +74,7 @@ function ShippingFee() {
                   handleSearch={handleSearch}
                   setDataState={setDataState}
                 />
-                <BoxState dataState={dataState}/>
+                <BoxState dataState={dataState} />
               </Flex>
             </Flex>
           </Flex>
