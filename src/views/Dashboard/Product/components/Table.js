@@ -85,7 +85,7 @@ const ProductTable = ({ productsData, refetch }) => {
       }),
       columnHelper.accessor('categoryId', {
         header: 'Danh mục',
-        cell: info => <Box>{info.getValue().title}</Box>,
+        cell: info => <Box>{info.getValue()?.title}</Box>,
       }),
       columnHelper.accessor('isPublished', {
         header: 'Phát hành',
