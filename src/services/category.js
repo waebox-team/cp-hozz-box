@@ -6,6 +6,14 @@ export const createCategory = data => request.post('/api/v1/categories/create', 
 export const updateCategory = data => request.post('/api/v1/categories/update', data);
 export const deleteCategory = data => request.post('/api/v1/categories/delete', data);
 export const setBestCategory = data => request.post('/api/v1/categories/set-best', data);
+export const exportTemplate = (data) => request.post('/api/v1/categories/export-template', data, { responseType: 'arraybuffer' })
+export const importFile = (data, config) =>
+  request.post('/api/v1/categories/import', data, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    ...config,
+  });
 
 export const updateThumbnail = async data => {
   return await request.post('/api/v1/common/upload-thumbnail', data, {
@@ -21,6 +29,7 @@ export const useUpdateCategoryMutation = () => useMutation({ mutationFn: updateC
 export const useDeleteCategoryMutation = () => useMutation({ mutationFn: deleteCategory });
 export const useUpdateThumbnailMutation = () => useMutation({ mutationFn: updateThumbnail });
 export const useSetBestCategoryMutation = () => useMutation({ mutationFn: setBestCategory });
+export const useExportTemplateMutation = () => useMutation({ mutationFn: exportTemplate });
 
 // Query
 export const useQueryGetListCategory = (params = {}, options = {}) =>

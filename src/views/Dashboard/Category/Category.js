@@ -12,15 +12,17 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
-import { useQueryGetListCategory } from 'services/category';
+import React, { useEffect, useRef, useState } from 'react';
+import { importFile, useExportTemplateMutation, useQueryGetListCategory } from 'services/category';
 import { CookieStorage } from 'utils/cookie-storage';
 import { useHistory } from 'react-router-dom';
 import { useMemo } from 'react';
-import { ModalType } from 'constants/common';
+import { FileExcelValid, ModalType } from 'constants/common';
 import SizeTable from './components/Table';
 import CreateCategoryModal from './components/CreateCategoryModal';
 import Pagination from 'components/Pagination/Pagination';
+import { downloadFile } from 'utils/helpers';
+import { toast } from 'components/Toast';
 
 function Category() {
   const textColor = useColorModeValue('gray.700', 'white');
@@ -31,6 +33,8 @@ function Category() {
     pageIndex: 0,
     pageSize: 10,
   });
+  const inputImportRef = useRef();
+  const exportTemplateMutation = useExportTemplateMutation();
 
   useEffect(() => {
     if (!CookieStorage.isAuthenticated()) {
@@ -77,6 +81,44 @@ function Category() {
     });
   };
 
+  const onDownloadTemplate = () => {
+    exportTemplateMutation.mutate(undefined, {
+      onSuccess: response => {
+        downloadFile(response, 'category-template');
+        toast.showMessageSuccess('Tải mẫu danh mục thành công');
+      },
+      onError: () => {
+        toast.showMessageError('Tải mẫu danh mục thất bại');
+      },
+    });
+  };
+
+  const handleImportProduct = async e => {
+    if (e?.target?.files?.[0]) {
+      const file = e.target.files[0];
+      const extensionFile = file?.name?.split('.')?.pop();
+
+      if (FileExcelValid.includes(extensionFile)) {
+        const formData = new FormData();
+
+        formData.append('categoryFile', file);
+
+        await importFile(formData)
+          .then(() => {
+            toast.showMessageSuccess('Tải lên danh mục thành công');
+            refetch();
+          })
+          .catch(() => {
+            toast.showMessageError('Tải lên danh mục thất bại');
+          });
+
+        return;
+      }
+
+      setError('Chỉ hỗ trợ tải lại file định dạng .xlsx, xls');
+    }
+  };
+
   return (
     <Flex direction="column" pt={{ base: '120px', md: '75px', lg: '100px' }}>
       <Card p="16px" mb="24px" bg="#fff">
@@ -104,11 +146,29 @@ function Category() {
                 </Stack>
               </Flex>
             </Flex>
-            <Button bg="#3182ce" color="#fff" _hover={{ bg: '#67a1d7' }} onClick={onOpenCreateModal}>
-              <Text fontSize="md" fontWeight="bold" cursor="pointer">
-                Thêm
-              </Text>
-            </Button>
+            <Flex>
+              <Button bg="#3182ce" color="#fff" _hover={{ bg: '#67a1d7' }} isLoading={false} onClick={onDownloadTemplate}>
+                Tải template
+              </Button>
+              <input type="file" hidden ref={inputImportRef} onChange={handleImportProduct} />
+                <Button
+                  bg="#3182ce"
+                  color="#fff"
+                  margin="0 16px"
+                  _hover={{ bg: '#67a1d7' }}
+                  onClick={() => {
+                    inputImportRef?.current?.click();
+                  }}
+                >
+                  Import sản phẩm
+                </Button>
+              <Button bg="#3182ce" color="#fff" _hover={{ bg: '#67a1d7' }} onClick={onOpenCreateModal}>
+                <Text fontSize="md" fontWeight="bold" cursor="pointer">
+                  Thêm
+                </Text>
+              </Button>
+            </Flex>
+
           </Flex>
         </CardHeader>
         <CardBody overflowX="auto">
