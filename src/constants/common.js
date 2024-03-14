@@ -225,6 +225,17 @@ export const ModalType = {
   Block: 'block',
 };
 
+export const STATUS_PURCHASE_HISTORY = {
+  complete: 'complete',
+  expired: 'expired',
+  open: 'open'
+}
+
+export const StatusPurchaseHistoryOptions = Object.keys(STATUS_PURCHASE_HISTORY).map(key => ({
+  label: key,
+  value: STATUS_PURCHASE_HISTORY[key],
+}));
+
 export const FileImageValid = ['png', 'jpeg', 'jpg'];
 
 export const FileExcelValid = ['xls', 'xlsx'];
