@@ -23,8 +23,8 @@ export const today = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD');
 export const formatDate = (date, format = 'MM/DD/YYYY') => moment(date).format(format);
 
 export const getInitFilerChart = () => ({
-  startDate: new Date(formatDate(moment(new Date()).subtract(6, 'days'))),
-  endDate: new Date(formatDate(new Date())),
+  startDate: new Date(formatDate(moment(new Date()).subtract(6, 'days').add(1, 'day'))),
+  endDate: new Date(formatDate(moment(new Date()).add(1, 'day'))),
 });
 
 export const downloadFile = (file, name) => {

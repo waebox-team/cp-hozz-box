@@ -3,24 +3,65 @@ import React, { useEffect, useState } from 'react';
 import { CookieStorage } from 'utils/cookie-storage';
 import { useHistory } from 'react-router-dom';
 import Pagination from 'components/Pagination/Pagination';
-import { useQueryGetListTransaction } from 'services/purchase-history';
+import { useQueryGetListMember, useQueryGetListTransaction } from 'services/purchase-history';
 import PurchaseHistoryTable from './components/Table';
 import isEmpty from 'lodash/isEmpty';
+import DatePicker from 'components/DatePicker/DatePicker';
+import { Select } from 'chakra-react-select';
+import { formatDate, getInitFilerChart } from 'utils/helpers';
+import moment from 'moment';
+import { mappingOptionSelect } from 'utils/mapping';
+import { StatusPurchaseHistoryOptions } from 'constants/common';
+
+const initFiler = {
+  endTime: getInitFilerChart().endDate,
+  startTime: getInitFilerChart().startDate,
+};
+
+export const initialFilter = {
+  pageSize: 10,
+  pageIndex: 0,
+  ...initFiler,
+};
 
 function PurchaseHistory() {
   const textColor = useColorModeValue('gray.700', 'white');
   const history = useHistory();
   const [searchTitle, setSearchTitle] = useState('');
-  const [filter, setFilter] = useState({
-    pageIndex: 0,
-    pageSize: 10,
+  const [filter, setFilter] = useState(initialFilter);
+  const [statisticFilter, setStatisticFilter] = useState({
+    memberId: null,
+    status: '',
+    ...initFiler,
   });
+  const [openMenuSelectMember, setOpenMenuSelectMember] = useState(false);
 
   const handleSearch = () => {
     setFilter({
       ...filter,
+      ...statisticFilter,
+      memberId: statisticFilter?.memberId?.value,
+      status: statisticFilter?.status?.value,
       searchKeyword: searchTitle,
     });
+  };
+
+  const onChangeDate = type => date => {
+    setStatisticFilter(prev => ({
+      ...prev,
+      ...(type === 'startTime' && { endTime: new Date(formatDate(moment(date).add(6, 'days'))) }),
+      [type]: date,
+    }));
+  };
+
+  const onReset = () => {
+    setFilter({
+      ...initialFilter,
+    });
+    setStatisticFilter({
+      ...initFiler,
+    });
+    setSearchTitle('')
   };
 
   useEffect(() => {
@@ -30,6 +71,13 @@ function PurchaseHistory() {
   }, []);
 
   const { data: dataPurchase } = useQueryGetListTransaction({ ...filter }, { enabled: CookieStorage.isAuthenticated() });
+  const { data: members } = useQueryGetListMember(
+    {
+      pageSize: 50,
+      pageIndex: 0,
+    },
+    { enabled: openMenuSelectMember }
+  );
 
   return (
     <Flex direction="column" pt={{ base: '120px', md: '75px', lg: '100px' }}>
@@ -44,11 +92,64 @@ function PurchaseHistory() {
               </Flex>
               <Flex justifyContent={'space-between'} alignItems={'end'} gap={'20px'} mt={'20px'}>
                 <Stack>
-                  <Flex alignItems={'center'} gap={'20px'} flexWrap={{ base: 'wrap', md: 'nowrap' }}>
-                    <FormControl minWidth={{ base: 'full', sm: '300px' }}>
+                  <Flex alignItems={'center'} gap={'14px'} flexWrap={'wrap'}>
+                    <FormControl display="flex" flexDirection={'column'} width={{ base: 'full', sm: '300px' }}>
+                      <FormLabel m="0">Ngày bắt đầu</FormLabel>
+                      <DatePicker selectedDate={statisticFilter.startTime} onChange={date => onChangeDate('startTime')(date)} />
+                    </FormControl>
+                    <FormControl display="flex" flexDirection={'column'} width={{ base: 'full', sm: '300px' }}>
+                      <FormLabel m="0">Ngày kết thúc</FormLabel>
+                      <DatePicker
+                        selectedDate={statisticFilter.endTime}
+                        minDate={statisticFilter.startTime}
+                        onChange={date => onChangeDate('endTime')(date)}
+                      />
+                    </FormControl>
+                    <FormControl maxWidth={'300px'}>
+                      <FormLabel>Thành viên</FormLabel>
+                      <Select
+                        onMenuOpen={() => setOpenMenuSelectMember(true)}
+                        isClearable
+                        menuShouldBlockScroll
+                        value={statisticFilter?.memberId || null}
+                        onChange={e => {
+                          setStatisticFilter(prev => ({
+                            ...prev,
+                            memberId: e,
+                          }));
+                        }}
+                        options={mappingOptionSelect(members?.data, 'fullname', '_id')}
+                      ></Select>
+                    </FormControl>
+                    <FormControl maxWidth={'300px'}>
+                      <FormLabel>Trạng thái</FormLabel>
+                      <Select
+                        isClearable
+                        menuShouldBlockScroll
+                        value={statisticFilter?.status || null}
+                        onChange={e => {
+                          setStatisticFilter(prev => ({
+                            ...prev,
+                            status: e,
+                          }));
+                        }}
+                        options={StatusPurchaseHistoryOptions}
+                      ></Select>
+                    </FormControl>
+                    <FormControl maxWidth={'300px'}>
                       <FormLabel>Tìm kiếm đơn hàng</FormLabel>
                       <Input value={searchTitle} onChange={e => setSearchTitle(e.target.value)} />
                     </FormControl>
+                    <Button
+                      variant="second"
+                      border={'1px solid #4492E1'}
+                      color={'blue.500'}
+                      maxH="30px"
+                      alignSelf={'end'}
+                      onClick={onReset}
+                    >
+                      Reset
+                    </Button>
                     <Button variant="primary" maxH="40px" alignSelf={'end'} onClick={handleSearch}>
                       <Text fontSize="md" fontWeight="bold" cursor="pointer">
                         Tìm kiếm
