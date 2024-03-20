@@ -12,7 +12,7 @@ const PurchaseHistoryTable = ({ purchaseHistoryData }) => {
     () => [
       columnHelper.accessor('memberId', {
         header: 'Người đặt hàng',
-        cell: info => info.getValue().username,
+        cell: info => info.getValue()?.username,
       }),
       columnHelper.accessor('order_no', {
         header: 'Mã đơn hàng',
