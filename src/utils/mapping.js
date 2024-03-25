@@ -2,7 +2,7 @@ import { CONVERT_UPPERCASE_REGEX, KEY_REGEX, convertEnumToLabelOption } from "co
 
 export const mappingCustomers = data =>
   data?.map(item => ({
-    name: item?.name,
+    fullname: item?.fullname,
     email: item?.email,
     code: item?.code,
     id: item?._id,
