@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Center, Flex, FormControl, FormLabel, SimpleGrid, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Center, Flex, FormControl, FormLabel, Heading, SimpleGrid, Text, useColorModeValue } from '@chakra-ui/react';
 import Card from 'components/Card/Card.js';
 import { useHistory } from 'react-router-dom';
 import IconBox from 'components/Icons/IconBox';
@@ -11,6 +11,7 @@ import { formatDate, getInitFilerChart } from 'utils/helpers';
 import { useQueryGetStatistics } from 'services/statistic';
 import { MdOutlinePayments } from "react-icons/md";
 import moment from 'moment';
+import { useUserState } from 'context/UserContext';
 
 const initFiler = {
   endTime: getInitFilerChart().endDate,
@@ -24,7 +25,7 @@ export default function Dashboard() {
   const sidebarBg = 'hsl(208.33deg 100% 96.31% / 80%)';
   const [statisticFilter, setStatisticFilter] = useState(initFiler);
   const { data: statistic } = useQueryGetStatistics(statisticFilter, { enabled: isLoggedIn ? true : false });
-
+  const { userInfo } = useUserState();
   // useEffect(() => {
   //   if (!CookieStorage.isAuthenticated()) {
   //     return history.push('/auth/sign-in');
@@ -58,10 +59,15 @@ export default function Dashboard() {
             px={"16px"}
           >
             <Card borderRadius="8px" bgColor="white">
+              <Heading fontWeight={700} fontSize={18} color={textColor}>
+                Chào mừng đến với Hozzbox! {userInfo?.username}
+              </Heading>
+            </Card>
+            {/* <Card borderRadius="8px" bgColor="white">
               <Text fontSize="xl" color={textColor} fontWeight="bold">
                 Lịch sử mua hàng
               </Text>
-            </Card>
+            </Card> */}
             <SimpleGrid columns={{ sm: 1, md: 3, xl: 3 }} spacing="24px" mb="20px" mt="20px">
               <StatisticalData
                 title="Tổng số người dùng"
