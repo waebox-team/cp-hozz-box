@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   AlertDialog,
@@ -9,7 +9,7 @@ import {
   AlertDialogOverlay,
   AlertDialogCloseButton,
 } from '@chakra-ui/react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import InputController from 'components/Form/InputController';
 import { ModalType } from 'constants/common';
@@ -25,6 +25,7 @@ const CreateCategoryModal = ({ isOpen, categorysDetail, onClose, refetch }) => {
   const createCategoryMutation = useCreateCategoryMutation();
   const updateCategoryMutation = useUpdateCategoryMutation();
   const updateThumnailMutation = useUpdateThumbnailMutation();
+  const [file, setFile] = useState();
   const { control, handleSubmit, reset, setValue } = useForm({
     resolver: yupResolver(CategoryFormValidate),
     defaultValues: {
@@ -63,23 +64,15 @@ const CreateCategoryModal = ({ isOpen, categorysDetail, onClose, refetch }) => {
           }
         );
       } else {
-        const formData = new FormData();
-        formData.append('thumbnailFile', values.thumbnail);
-        updateThumnailMutation.mutate(formData, {
-          onSuccess: res => {
-            setValue('thumbnail', res?.data);
-            updateCategoryMutation.mutate(
-              { ...values, categoryId },
-              {
-                onSuccess: () => {
-                  handleSuccess();
-                },
-                onError: error => handleError(error),
-              }
-            );
-          },
-          onError: error => handleError(error),
-        });
+        updateCategoryMutation.mutate(
+          { ...values, categoryId },
+          {
+            onSuccess: () => {
+              handleSuccess();
+            },
+            onError: error => handleError(error),
+          }
+        );
       }
     } else {
       createCategoryMutation.mutate(
@@ -91,10 +84,21 @@ const CreateCategoryModal = ({ isOpen, categorysDetail, onClose, refetch }) => {
       );
     }
   };
-
-  const handleImage = res => {
-    setValue('thumbnail', res.target.files[0]);
-  };
+  const handleFileChange = (e, field) => {
+    if (e.target.files.length) {
+      const formData = new FormData();
+      formData.append('thumbnailFile', e.target.files[0])
+      updateThumnailMutation.mutate(
+        formData,
+        {
+          onSuccess: (res) => {
+            setFile(e.target.files[0].name)
+            field.onChange(res?.data)
+          },
+        }
+      )
+    }
+  }
   return (
     <>
       <AlertDialog
@@ -107,15 +111,29 @@ const CreateCategoryModal = ({ isOpen, categorysDetail, onClose, refetch }) => {
         isCentered
       >
         <AlertDialogOverlay />
-        <AlertDialogContent  maxW={'600px'} maxH={'400px'} >
-          <AlertDialogHeader  textTransform="uppercase">{categorysDetail ? 'Cập nhật' : 'Tạo'} Danh Mục</AlertDialogHeader>
+        <AlertDialogContent maxW={'600px'} maxH={'400px'} >
+          <AlertDialogHeader textTransform="uppercase">{categorysDetail ? 'Cập nhật' : 'Tạo'} Danh Mục</AlertDialogHeader>
           <AlertDialogCloseButton />
           <AlertDialogBody >
-              <InputController control={control} name="title" label="Tên"  />
-              <InputController control={control} name="description" label="Mô tả" type='textarea' />
-            {categorysDetail ? (
-                <input type="file"  onChange={res => handleImage(res)} style={{ marginTop: '20px' }} />
-            ) : null}
+            <InputController control={control} name="title" label="Tên" />
+            <InputController control={control} name="description" label="Mô tả" type='textarea' />
+            <Controller
+              control={control}
+              name="thumbnail"
+              render={({ field, fieldState: { error } }) => (
+                <div className='z-0'>
+                  <div className="file-upload mt-2">
+                    <div className="file-select font-montserrat rounded-lg">
+                      <div className="file-select-button" id="fileName">Chọn tệp</div>
+                      <div className="file-select-name" id="noFile">{file ? file : `Không có tệp nào được chọn`}</div>
+                      <input type="file" name="chooseFile" id="chooseFile" onChange={(e) => handleFileChange(e, field)} />
+                    </div>
+
+                  </div>
+                  {error && <div className="text-danger mt-2">{error.message}</div>}
+                </div>
+              )}
+            />
           </AlertDialogBody>
           <AlertDialogFooter>
             <Button

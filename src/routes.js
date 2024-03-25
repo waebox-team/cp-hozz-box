@@ -1,6 +1,7 @@
 import React from 'react';
 import { IoBagCheckSharp, IoBook, IoCar, IoListCircleOutline } from 'react-icons/io5';
 import { HomeIcon, PersonIcon } from 'components/Icons/Icons';
+import { BiFoodMenu } from "react-icons/bi";
 import Dashboard from 'views/Dashboard/Dashboard.js';
 import SignUp from 'views/Pages/SignUp.js';
 import SignIn from 'views/Pages/SignIn';
@@ -10,9 +11,10 @@ import Size from 'views/Dashboard/Size';
 import Colors from 'views/Dashboard/Colors';
 import Product from 'views/Dashboard/Product';
 import ProductForm from 'views/Dashboard/Product/components/ProductForm';
-import ShippingFee from 'views/Dashboard/ShippingFee/ShippingFee';  
+import ShippingFee from 'views/Dashboard/ShippingFee/ShippingFee';
 import Category from 'views/Dashboard/Category/Category';
 import PurchaseHistory from 'views/Dashboard/PurchaseHistory/PurchaseHistory';
+import Members from 'views/Dashboard/Members/Members';
 
 var dashRoutes = [
   {
@@ -21,6 +23,14 @@ var dashRoutes = [
     icon: <HomeIcon color="inherit" />,
     layout: '/admin',
     component: Dashboard,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: '/members',
+    name: 'Members',
+    icon: <BiFoodMenu color="inherit" />,
+    layout: '/admin',
+    component: Members,
     role: [Roles.ADMIN],
   },
   {
@@ -77,7 +87,7 @@ var dashRoutes = [
   {
     path: '/shipping',
     name: 'Phí Vận Chuyển',
-    icon: <IoCar  size={20} />,
+    icon: <IoCar size={20} />,
     layout: '/admin',
     component: ShippingFee,
     role: [Roles.ADMIN],

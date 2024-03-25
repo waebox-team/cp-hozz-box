@@ -88,7 +88,7 @@ const SizeTable = ({ categoryData, handleUpdateCategory, refetch }) => {
         cell: info => {
           const thumbnailUrl = info.row.original.thumbnail;
           return thumbnailUrl ? (
-            <img src={`${process.env.REACT_APP_API_HOST}/${thumbnailUrl}`} style={{ width: '80px', height: '80px', objectFit: 'cover' }} />
+            <img src={`${process.env.REACT_APP_API_HOST}/${thumbnailUrl}`} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
           ) : null;
         },
       }),
