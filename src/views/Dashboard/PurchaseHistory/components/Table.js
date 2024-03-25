@@ -1,12 +1,15 @@
-import { Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Flex, IconButton, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable, createColumnHelper } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { formatDate } from 'utils/helpers';
+import { IoListOutline } from "react-icons/io5"
 
-const PurchaseHistoryTable = ({ purchaseHistoryData }) => {
+const PurchaseHistoryTable = ({ purchaseHistoryData, handleSelectedRow }) => {
   const [sorting, setSorting] = useState([]);
   const columnHelper = createColumnHelper();
+
+  const handleClickRow = transaction => handleSelectedRow(transaction._id)
 
   const columns = useMemo(
     () => [
@@ -38,6 +41,19 @@ const PurchaseHistoryTable = ({ purchaseHistoryData }) => {
         header: 'Ngày tạo',
         cell: info => formatDate(info.getValue()),
       }),
+      columnHelper.accessor('action', {
+        header: '',
+        cell: info => (
+          <Flex alignItems="center" gap={1}>
+            <IconButton
+              bg="transparent"
+              onClick={() => handleClickRow(info?.row?.original)}
+            >
+              <IoListOutline />
+            </IconButton>
+          </Flex>
+        ),
+      }),
     ],
     [purchaseHistoryData]
   );
@@ -55,44 +71,46 @@ const PurchaseHistoryTable = ({ purchaseHistoryData }) => {
   });
 
   return (
-    <Table>
-      <Thead>
-        {table.getHeaderGroups().map(headerGroup => (
-          <Tr key={headerGroup.id}>
-            {headerGroup.headers.map(header => (
-              <Th key={header.id} w="120px">
-                {header.isPlaceholder ? null : (
-                  <Box cursor={header.column.getCanSort() ? 'pointer' : 'default'} onClick={header.column.getToggleSortingHandler()}>
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                    {{
-                      asc: ' 🔼',
-                      desc: ' 🔽',
-                    }[header.column.getIsSorted()] ?? null}
-                  </Box>
-                )}
-              </Th>
-            ))}
-          </Tr>
-        ))}
-      </Thead>
-      <Tbody>
-        {isEmpty(table.getRowModel().rows) ? (
-          <Tr>
-            <Td textAlign="center" colSpan={7}>
-              Không có dữ liệu
-            </Td>
-          </Tr>
-        ) : (
-          table.getRowModel().rows.map(row => (
-            <Tr key={row.id}>
-              {row.getVisibleCells().map(cell => (
-                <Td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Td>
+    <>
+      <Table>
+        <Thead>
+          {table.getHeaderGroups().map(headerGroup => (
+            <Tr key={headerGroup.id}>
+              {headerGroup.headers.map(header => (
+                <Th key={header.id} w="120px">
+                  {header.isPlaceholder ? null : (
+                    <Box cursor={header.column.getCanSort() ? 'pointer' : 'default'} onClick={header.column.getToggleSortingHandler()}>
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {{
+                        asc: ' 🔼',
+                        desc: ' 🔽',
+                      }[header.column.getIsSorted()] ?? null}
+                    </Box>
+                  )}
+                </Th>
               ))}
             </Tr>
-          ))
-        )}
-      </Tbody>
-    </Table>
+          ))}
+        </Thead>
+        <Tbody>
+          {isEmpty(table.getRowModel().rows) ? (
+            <Tr>
+              <Td textAlign="center" colSpan={7}>
+                Không có dữ liệu
+              </Td>
+            </Tr>
+          ) : (
+            table.getRowModel().rows.map(row => (
+              <Tr key={row.id}>
+                {row.getVisibleCells().map(cell => (
+                  <Td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</Td>
+                ))}
+              </Tr>
+            ))
+          )}
+        </Tbody>
+      </Table>
+    </>
   );
 };
 

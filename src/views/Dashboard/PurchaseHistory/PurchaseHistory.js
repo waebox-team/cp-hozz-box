@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardHeader, Flex, FormControl, FormLabel, Input, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+import { Button, Card, CardBody, CardHeader, Flex, FormControl, FormLabel, Input, Stack, Text, useColorModeValue, useDisclosure } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { CookieStorage } from 'utils/cookie-storage';
 import { useHistory } from 'react-router-dom';
@@ -12,6 +12,7 @@ import { formatDate, getInitFilerChart } from 'utils/helpers';
 import moment from 'moment';
 import { mappingOptionSelect } from 'utils/mapping';
 import { StatusPurchaseHistoryOptions } from 'constants/common';
+import DetailOrderModal from './components/DetailOrderModal';
 
 const initFiler = {
   endTime: getInitFilerChart().endDate,
@@ -26,6 +27,7 @@ export const initialFilter = {
 
 function PurchaseHistory() {
   const textColor = useColorModeValue('gray.700', 'white');
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const history = useHistory();
   const [searchTitle, setSearchTitle] = useState('');
   const [filter, setFilter] = useState(initialFilter);
@@ -35,6 +37,7 @@ function PurchaseHistory() {
     ...initFiler,
   });
   const [openMenuSelectMember, setOpenMenuSelectMember] = useState(false);
+  const [transactionId, setTransactionId] = useState('');
 
   const handleSearch = () => {
     setFilter({
@@ -78,6 +81,16 @@ function PurchaseHistory() {
     },
     { enabled: openMenuSelectMember }
   );
+
+  const handleSelectedRow = _id => {
+    setTransactionId(_id)
+    onOpen()
+  }
+
+  const handelCloseModal = () => {
+    setTransactionId('')
+    onClose()
+  }
 
   return (
     <Flex direction="column" pt={{ base: '120px', md: '75px', lg: '100px' }}>
@@ -144,7 +157,7 @@ function PurchaseHistory() {
                       variant="second"
                       border={'1px solid #4492E1'}
                       color={'blue.500'}
-                      maxH="30px"
+                      maxH="40px"
                       alignSelf={'end'}
                       onClick={onReset}
                     >
@@ -163,7 +176,7 @@ function PurchaseHistory() {
         </CardHeader>
         <CardBody overflowX="auto">
           <Stack overflow={'auto'}>
-            <PurchaseHistoryTable purchaseHistoryData={dataPurchase?.data || []} />
+            <PurchaseHistoryTable purchaseHistoryData={dataPurchase?.data || []} handleSelectedRow={handleSelectedRow} />
           </Stack>
           {!isEmpty(dataPurchase?.data) && (
             <Flex justifyContent={'flex-end'}>
@@ -183,6 +196,7 @@ function PurchaseHistory() {
           )}
         </CardBody>
       </Card>
+      {isOpen && transactionId && <DetailOrderModal isOpen={isOpen} transactionId={transactionId} onClose={handelCloseModal} />}
     </Flex>
   );
 }

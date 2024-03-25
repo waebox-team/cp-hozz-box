@@ -15,7 +15,7 @@ const CommentTable = ({ comments, refetch }) => {
 
   const deleteCommentMutation = useMutationDeleteCommentByAdmin();
 
-  const handleDeleteSize = comment => {
+  const handleDeleteComment = comment => {
     const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?');
     if (!confirmDelete) {
       return;
@@ -77,7 +77,7 @@ const CommentTable = ({ comments, refetch }) => {
             <IconButton
               bg="transparent"
               onClick={() => {
-                handleDeleteSize(info?.row?.original);
+                handleDeleteComment(info?.row?.original);
               }}
             >
               <DeleteIcon color="red.400" boxSize={4} />
