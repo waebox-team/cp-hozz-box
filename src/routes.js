@@ -1,5 +1,5 @@
 import React from 'react';
-import { IoBagCheckSharp, IoBook, IoCar, IoListCircleOutline } from 'react-icons/io5';
+import { IoBagCheckSharp, IoBook, IoCar, IoListCircleOutline, IoChatboxEllipsesOutline  } from 'react-icons/io5';
 import { HomeIcon, PersonIcon } from 'components/Icons/Icons';
 import { BiFoodMenu } from "react-icons/bi";
 import Dashboard from 'views/Dashboard/Dashboard.js';
@@ -15,6 +15,7 @@ import ShippingFee from 'views/Dashboard/ShippingFee/ShippingFee';
 import Category from 'views/Dashboard/Category/Category';
 import PurchaseHistory from 'views/Dashboard/PurchaseHistory/PurchaseHistory';
 import Members from 'views/Dashboard/Members/Members';
+import Comment from 'views/Dashboard/Comment';
 
 var dashRoutes = [
   {
@@ -98,6 +99,14 @@ var dashRoutes = [
     icon: <IoBagCheckSharp color="inherit" />,
     layout: '/admin',
     component: PurchaseHistory,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: '/comment',
+    name: 'Bình luận',
+    icon: <IoChatboxEllipsesOutline  size={20} />,
+    layout: '/admin',
+    component: Comment,
     role: [Roles.ADMIN],
   },
   {
