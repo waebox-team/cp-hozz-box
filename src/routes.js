@@ -1,5 +1,5 @@
 import React from 'react';
-import { IoBagCheckSharp, IoBook, IoCar, IoListCircleOutline, IoChatboxEllipsesOutline  } from 'react-icons/io5';
+import { IoBagCheckSharp, IoBook, IoCar, IoListCircleOutline, IoChatboxEllipsesOutline, IoEarth } from 'react-icons/io5';
 import { HomeIcon, PersonIcon } from 'components/Icons/Icons';
 import { BiFoodMenu } from "react-icons/bi";
 import Dashboard from 'views/Dashboard/Dashboard.js';
@@ -16,6 +16,7 @@ import Category from 'views/Dashboard/Category/Category';
 import PurchaseHistory from 'views/Dashboard/PurchaseHistory/PurchaseHistory';
 import Members from 'views/Dashboard/Members/Members';
 import Comment from 'views/Dashboard/Comment';
+import Province from 'views/Dashboard/Province';
 
 var dashRoutes = [
   {
@@ -107,6 +108,14 @@ var dashRoutes = [
     icon: <IoChatboxEllipsesOutline  size={20} />,
     layout: '/admin',
     component: Comment,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: '/province',
+    name: 'Quốc gia',
+    icon: <IoEarth   size={20} />,
+    layout: '/admin',
+    component: Province,
     role: [Roles.ADMIN],
   },
   {
