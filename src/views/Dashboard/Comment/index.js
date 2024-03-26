@@ -12,6 +12,7 @@ import { Select } from 'chakra-react-select';
 import { useQueryGetListMember } from "services/purchase-history";
 import { useQueryGetProducts } from "services/product";
 import { mappingOptionSelect } from "utils/mapping";
+import Pagination from "components/Pagination/Pagination";
 
 const initFiler = {
   endTime: getInitFilerChart().endDate,
@@ -116,6 +117,20 @@ export default function Comment() {
             <Stack overflow={'auto'}>
               <CommentTable comments={comments?.data || []} refetch={refetch} />
             </Stack>
+            <Flex justifyContent={'flex-end'}>
+              <Pagination
+                page={comments?.pagination?.page}
+                pageLength={comments?.pagination?.pageSize}
+                totalRecords={comments?.pagination?.count}
+                onPageChange={(page, pageLength) => {
+                  setFilter({
+                    ...filter,
+                    pageSize: pageLength,
+                    pageIndex: page - 1,
+                  });
+                }}
+              />
+            </Flex>
           </CardBody>
         </Card>
       </Flex>
