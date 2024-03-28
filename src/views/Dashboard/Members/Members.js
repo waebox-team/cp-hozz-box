@@ -21,6 +21,7 @@ import SizeTable from './components/Table';
 // import CreateCategoryModal from './components/CreateCategoryModal';
 import Pagination from 'components/Pagination/Pagination';
 import { useQueryGetListMember } from 'services/purchase-history';
+import { Select } from 'chakra-react-select';
 
 function Members() {
   const isLoggedIn = CookieStorage.isAuthenticated();
@@ -32,6 +33,27 @@ function Members() {
     pageSize: 20
   });
   const [searchTitle, setSearchTitle] = useState('');
+  const actives = [
+    {
+      label: 'Đã kích hoạt',
+      value: 1
+    },
+    {
+      label: 'Chưa kích hoạt',
+      value: 0
+    },
+  ];
+
+  const locks = [
+    {
+      label: 'Đã khóa',
+      value: 1
+    },
+    {
+      label: 'Hoạt động',
+      value: 0
+    },
+  ]
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -56,17 +78,7 @@ function Members() {
     [onCloseCreateModal, onCloseChangeStatusModal]
   );
 
-  const { data: members, refetch } = useQueryGetListMember({ ...filter }, { enabled: isLoggedIn });
-
-  const handleUpdateItem = (size, modalType) => {
-    openModal?.[modalType]?.();
-    setSizeEditing(size);
-  };
-
-  const handelCloseModal = modalType => {
-    closeModal?.[modalType]?.();
-    setSizeEditing(null);
-  };
+  const { data: members, refetch } = useQueryGetListMember({ ...filter }, { enabled: isLoggedIn });;
 
   const handleSearch = () => {
     setFilter({
@@ -74,6 +86,7 @@ function Members() {
       searchKeyword: searchTitle,
     });
   };
+
   return (
     <Flex direction="column" pt={{ base: '120px', md: '75px', lg: '100px' }}>
       <Card p="16px" mb="24px" bg="#fff">
@@ -88,7 +101,7 @@ function Members() {
               <Flex justifyContent={'space-between'} alignItems={'end'} gap={'20px'} mt={'20px'}>
                 <Stack>
                   <Flex alignItems={'center'} gap={'20px'} flexWrap={{ base: 'wrap', md: 'nowrap' }}>
-                    <FormControl minWidth={{ base: 'full', sm: '300px' }}>
+                    <FormControl width={{ base: 'full', sm: '300px' }}>
                       <FormLabel>Tìm kiếm Thành Viên</FormLabel>
                       <Input value={searchTitle} onChange={e => setSearchTitle(e.target.value)} />
                     </FormControl>
@@ -97,6 +110,36 @@ function Members() {
                         Tìm kiếm
                       </Text>
                     </Button>
+                    <FormControl width={{ base: 'full', sm: '300px' }}>
+                      <FormLabel>Trạng thái kích hoạt</FormLabel>
+                      <Select
+                        isClearable
+                        menuShouldBlockScroll
+                        value={filter?.active || null}
+                        onChange={e => {
+                          setFilter(prev => ({
+                            ...prev,
+                            active: e,
+                          }));
+                        }}
+                        options={actives}
+                      ></Select>
+                    </FormControl>
+                    <FormControl width={{ base: 'full', sm: '300px' }}>
+                      <FormLabel>Trạng thái hoạt động</FormLabel>
+                      <Select
+                        isClearable
+                        menuShouldBlockScroll
+                        value={filter?.block || null}
+                        onChange={e => {
+                          setFilter(prev => ({
+                            ...prev,
+                            block: e,
+                          }));
+                        }}
+                        options={locks}
+                      ></Select>
+                    </FormControl>
                   </Flex>
                 </Stack>
               </Flex>
@@ -105,7 +148,7 @@ function Members() {
         </CardHeader>
         <CardBody overflowX="auto">
           <Stack overflow={'auto'}>
-            <SizeTable categorysData={members?.data || []} handleUpdateCategory={handleUpdateItem} refetch={refetch} />
+            <SizeTable membersData={members?.data || []} refetch={refetch} />
           </Stack>
           <Flex justifyContent={'flex-end'}>
             <Pagination
