@@ -24,7 +24,6 @@ const DetailOrderModal = (props) => {
   const { isOpen, onClose, transactionId } = props;
   const columnHelper = createColumnHelper();
   const { data: orders } = useQueryGetOrderByTransaction(transactionId, { enabled: transactionId ? true : false })
-  console.log(orders, 'orders');
 
   const columns = useMemo(
     () => [
@@ -59,7 +58,7 @@ const DetailOrderModal = (props) => {
     ],
     [orders]
   );
-  console.log(orders?.data?.cartId?.products, 'orders?.data?.cartId?.products')
+
   const table = useReactTable({
     data: orders?.data?.cartId?.products || [],
     columns,
