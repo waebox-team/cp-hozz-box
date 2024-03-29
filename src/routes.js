@@ -1,5 +1,6 @@
 import React from 'react';
 import { IoBagCheckSharp, IoBook, IoCar, IoListCircleOutline, IoChatboxEllipsesOutline, IoEarth } from 'react-icons/io5';
+import { AiOutlineShoppingCart } from "react-icons/ai";
 import { HomeIcon, PersonIcon } from 'components/Icons/Icons';
 import { BiFoodMenu } from "react-icons/bi";
 import Dashboard from 'views/Dashboard/Dashboard.js';
@@ -17,6 +18,7 @@ import PurchaseHistory from 'views/Dashboard/PurchaseHistory/PurchaseHistory';
 import Members from 'views/Dashboard/Members/Members';
 import Comment from 'views/Dashboard/Comment';
 import Province from 'views/Dashboard/Province';
+import Orders from 'views/Dashboard/Orders';
 
 var dashRoutes = [
   {
@@ -84,6 +86,14 @@ var dashRoutes = [
     icon: <IoListCircleOutline size={20} />,
     layout: '/admin',
     component: Product,
+    role: [Roles.ADMIN],
+  },
+  {
+    path: '/order',
+    name: 'Đơn hàng',
+    icon: <AiOutlineShoppingCart size={20} />,
+    layout: '/admin',
+    component: Orders,
     role: [Roles.ADMIN],
   },
   {

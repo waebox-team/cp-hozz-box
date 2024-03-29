@@ -71,7 +71,6 @@ const CountryTable = ({ states, refetch }) => {
       <Thead>
         {table.getHeaderGroups().map(headerGroup => (
           <Tr key={headerGroup.id}>
-            {console.log(headerGroup)}
             {headerGroup.headers.map(header => (
               <Th key={header.id} w="120px">
                 {header.isPlaceholder ? null : (
