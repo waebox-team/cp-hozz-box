@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+import { Button, Flex, FormControl, FormLabel, Input, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import Card from 'components/Card/Card';
@@ -11,6 +11,9 @@ import ProductTable from './components/Table';
 import { downloadFile } from 'utils/helpers';
 import { toast } from 'components/Toast';
 import { FileExcelValid } from 'constants/common';
+import { Select } from 'chakra-react-select';
+import { useQueryGetListCategory } from 'services/category';
+import { mappingOptionSelect } from 'utils/mapping';
 
 export default function Product() {
   const history = useHistory();
@@ -20,10 +23,31 @@ export default function Product() {
     pageIndex: 0,
     pageSize: 10,
   });
-
+  const [searchTitle, setSearchTitle] = useState('');
   const { data: productsData, refetch } = useQueryGetProducts(filter);
+  const { data: categories } = useQueryGetListCategory();
   const exportTemplateProductMutation = useExportTemplateProductMutation();
-
+  const publishes = [
+    {
+      label: 'Phát hành',
+      value: 1
+    },
+    {
+      label: 'Chưa phát hành',
+      value: 0
+    },
+  ];
+  const news = [
+    {
+      label: 'Sản phẩm mới',
+      value: 1
+    },
+    {
+      label: 'Sản phẩm cũ',
+      value: 0
+    },
+  ];
+  
   const onDownloadTemplate = () => {
     exportTemplateProductMutation.mutate(undefined, {
       onSuccess: response => {
@@ -33,6 +57,13 @@ export default function Product() {
       onError: () => {
         toast.showMessageError('Tải mẫu sản phẩm thất bại');
       },
+    });
+  };
+
+  const handleSearch = () => {
+    setFilter({
+      ...filter,
+      searchKeyword: searchTitle,
     });
   };
 
@@ -74,36 +105,6 @@ export default function Product() {
                     Sản phẩm
                   </Text>
                 </Flex>
-                {/* <Flex justifyContent={'space-between'} alignItems={'end'} gap={'20px'} mt={'20px'}>
-                <Stack>
-                  <Flex alignItems={'center'} gap={'20px'} flexWrap={{ base: 'wrap', md: 'nowrap' }}>
-                    <FormControl minWidth={{ base: 'full', sm: '300px' }}>
-                      <FormLabel>Loại ticket</FormLabel>
-                      <Select
-                        isClearable
-                        menuShouldBlockScroll
-                        onChange={e => {
-                          setTicketType(e);
-                        }}
-                        options={TypeTicket}
-                      ></Select>
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Đã phê duyệt</FormLabel>
-                      <Switch
-                        colorScheme="blue"
-                        isChecked={switched}
-                        onChange={event => {
-                          setSwitched(event.target.checked);
-                        }}
-                      />
-                    </FormControl>
-                    <Button variant="primary" maxH="30px" onClick={onFilter} alignSelf={'end'}>
-                      Lọc
-                    </Button>
-                  </Flex>
-                </Stack>
-              </Flex> */}
               </Flex>
               <Flex gap={2}>
                 <Button bg="#3182ce" color="#fff" _hover={{ bg: '#67a1d7' }} isLoading={false} onClick={onDownloadTemplate}>
@@ -135,6 +136,66 @@ export default function Product() {
                   </Text>
                 </Button>
               </Flex>
+            </Flex>
+            <Flex justifyContent={'space-between'} alignItems={'end'} gap={'20px'} mt={'20px'}>
+              <Stack>
+                <Flex alignItems={'center'} gap={'20px'} flexWrap={{ base: 'wrap', md: 'nowrap' }}>
+                  <FormControl width={{ base: 'full', sm: '250px' }}>
+                    <FormLabel>Tìm kiếm Thành Viên</FormLabel>
+                    <Input value={searchTitle} onChange={e => setSearchTitle(e.target.value)} />
+                  </FormControl>
+                  <Button variant="primary" maxH="40px" alignSelf={'end'} onClick={handleSearch}>
+                    <Text fontSize="md" fontWeight="bold" cursor="pointer">
+                      Tìm kiếm
+                    </Text>
+                  </Button>
+                  <FormControl width={{ base: 'full', sm: '250px' }}>
+                    <FormLabel>Danh mục</FormLabel>
+                    <Select
+                      isClearable
+                      menuShouldBlockScroll
+                      value={filter?.category || null}
+                      onChange={e => {
+                        setFilter(prev => ({
+                          ...prev,
+                          category: e,
+                        }));
+                      }}
+                      options={mappingOptionSelect(categories?.data, 'title', '_id')}
+                    ></Select>
+                  </FormControl>
+                  <FormControl width={{ base: 'full', sm: '250px' }}>
+                    <FormLabel>Trạng thái sản phẩm</FormLabel>
+                    <Select
+                      isClearable
+                      menuShouldBlockScroll
+                      value={filter?.publish || null}
+                      onChange={e => {
+                        setFilter(prev => ({
+                          ...prev,
+                          publish: e,
+                        }));
+                      }}
+                      options={publishes}
+                    ></Select>
+                  </FormControl>
+                  <FormControl width={{ base: 'full', sm: '250px' }}>
+                    <FormLabel>Tình trạng sản phẩm</FormLabel>
+                    <Select
+                      isClearable
+                      menuShouldBlockScroll
+                      value={filter?.new || null}
+                      onChange={e => {
+                        setFilter(prev => ({
+                          ...prev,
+                          new: e,
+                        }));
+                      }}
+                      options={news}
+                    ></Select>
+                  </FormControl>
+                </Flex>
+              </Stack>
             </Flex>
           </CardHeader>
           <CardBody overflowX="auto">

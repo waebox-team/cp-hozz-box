@@ -43,6 +43,13 @@ export const useExportTemplateProductMutation = () => useMutation({ mutationFn: 
 export const useQueryGetCatForProduct = (params = {}, options = {}) =>
   useQuery({ queryKey: ['GET_CATE_FOR_PRODUCT', params], queryFn: () => getCatForProduct(params), ...options });
 export const useQueryGetProducts = (params = {}, options = {}) =>
-  useQuery({ queryKey: ['GET_PRODUCTS', params], queryFn: () => getProducts(params), ...options });
+  useQuery({ queryKey: ['GET_PRODUCTS', params], queryFn: () => getProducts({
+    pageSize: params.pageSize,
+    pageIndex: params.pageIndex,
+    searchKeyword: params.searchKeyword || '',
+    categoryId: params?.category?.value || '',
+    isPublished: params?.publish?.value,
+    isNew: params?.new?.value,
+  }), ...options });
 export const useQueryGetProductDetail = (id, options = {}) =>
   useQuery({ queryKey: ['GET_PRODUCT_DETAIL', id], queryFn: () => getProductDetail(id), ...options });
