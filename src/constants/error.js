@@ -20,4 +20,5 @@ export const ErrorApi = {
   THE_WEBSITE_AD_UNIT_IS_INVALID: 'Đơn vị quảng cáo web không hợp lệ',
   THE_WEBSITE_URL_IS_INVALID: 'Địa chỉ website không hợp lệ',
   WEBSITE_ALREADY_EXISTS: 'Trang web này đã tồn tại',
+  CATEGORY_IS_BEST_LIMIT: 'Danh mục tốt nhất không được quá 3 danh mục'
 };
