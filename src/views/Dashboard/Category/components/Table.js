@@ -56,7 +56,7 @@ const SizeTable = ({ categoryData, handleUpdateCategory, refetch }) => {
         },
         onError: () => {
           const errorMessage = `${actionText} danh mục ${category.title} là danh mục tốt nhất không thành công`;
-          toast.showMessageError(errorMessage);
+          // toast.showMessageError(errorMessage);
           refetch?.();
         },
       }
